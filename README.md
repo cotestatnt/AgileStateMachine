@@ -4,7 +4,8 @@ Arduino/C++ library to simply and efficiently model and run a finite state machi
 ___
 ### Introduction
 
-States represent the different situations in which the machine can be at any time. The transitions connect two states, and are associated with a trigger condition which carries out the change of state (if you take a look at the examples included, you will find some different way for triggering a transition).
+**States** represent the different situations in which the machine can be at any time. 
+A **Transition** connect two states, and are associated with a trigger condition which carries out the change of state (if you take a look at the examples included, you will find some different way for triggering a transition).
 
 To update the machine, call the `execute()` function, which checks for transitions that have the current state as input and associated conditions.
 
