@@ -1,0 +1,43 @@
+#######################################
+# Syntax Coloring Map StateMachine
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+State	KEYWORD1
+Action	KEYWORD1
+Transition	KEYWORD1
+StateMachine	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+setCurrentState	KEYWORD2
+setInitialState	KEYWORD2
+GetStatesNumber	KEYWORD2
+getActiveStateName	    KEYWORD2
+getCurrentState	KEYWORD2
+getNextState	KEYWORD2
+getLastEnterTime	KEYWORD2
+execute			KEYWORD2
+addTransition	KEYWORD2
+addState		KEYWORD2
+setIndex		KEYWORD2
+getIndex		KEYWORD2
+setTimeout		KEYWORD2
+getTimeout		KEYWORD2
+getEnteringTime		KEYWORD2
+getStateName		KEYWORD2
+setStateMaxTime		KEYWORD2
+setStateMinTime		KEYWORD2
+clearTransitions		KEYWORD2
+addAction		KEYWORD2
+getActions		KEYWORD2
+runActions		KEYWORD2
+clearActions		KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
