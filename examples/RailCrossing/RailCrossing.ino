@@ -1,103 +1,105 @@
+#include "AgileStateMachine.h"
 #include <Servo.h>
-#include "YA_FSM.h"
-#include "Blinker.h"    
 
-#define SIG_TRAIN_IN 3
-#define SIG_TRAIN_OUT 2
-#define SERVO_PIN  6
-
-#define PASS_NOT_ALLOWED  11
-#define PASS_ALLOWED 12
-#define OUT_LIGHT_BELL 13
+#define SIG_TRAIN_IN      3
+#define SIG_TRAIN_OUT     2
+#define SERVO_PIN         6
+#define STOP_PASS         11
+#define FREE_PASS         12
+#define OUT_LIGHT_BELL    13
 
 // After the train has passed, wait a little time to be sure
-#define MOVE_TIME  1000   // Time needed for GATE moving (up and down)
-#define WAIT_FREE  10000  // Wait time after train has gone (in case another train is arriving)
-#define BLINK_TIME 250     
+#define MOVE_TIME         1000   // Time needed for GATE moving (up and down)
+#define WAIT_FREE_TIME    10000  // Wait time after train has gone (in case another train is arriving)
+#define BLINK_TIME 250
 
-#define GATE_CLOSED  0
-#define GATE_OPENED  90
-
-// Create new FSM
-YA_FSM stateMachine;
-
-// Create a Blinker (included utility class) for led blink handling
-Blinker blinker(OUT_LIGHT_BELL, BLINK_TIME);
+#define CLOSE_POSITION  0
+#define OPEN_POSITION   90
 
 // Handle the gate position
-Servo theGate; 
-uint16_t servoPos = GATE_OPENED;
+Servo theGate;
+uint16_t servoPos = OPEN_POSITION ;
 
-// State Alias
-enum State {GATE_OPEN, GATE_LOWERING, GATE_CLOSE, GATE_WAIT, GATE_RISING };
+// The Finite State Machine
+StateMachine fsm;
 
-// Helper for print labels instead integer when state change
-const char* const stateName[] PROGMEM = { "Gate OPEN", "Lowering GATE", "Gate CLOSE", "Wait time", "Rising GATE"};
+// Input State Machine interface
+bool inTrainArrive, inTrainGone;
 
-// Instead of bool function() callback, in this example we will use 
-// bool variables to trig two transitions (the others will trig on timout)
-bool theTrainIsComing = false;
-bool theTrainIsGone = false;
+// The finite state
+State* stGateOpen;    // The rail crossing gate is opened (free entry)
+State* stGateClose;   // The rail crossing gate is closed (stop entry)
+State* stMoveUp;      // The rail crossing gate is moving up (free)
+State* stMoveDown;    // The rail crossing gate is moving down (stop)
+State* stWaitTrain;   // Wait if another train is passing before move up the gate
 
-// Define "on entering" callback function (the same for all states)
-void onEnter(){   
-  switch (stateMachine.GetState() ){
-    case GATE_CLOSE: 
-      digitalWrite(PASS_NOT_ALLOWED, HIGH);
-      Serial.println(F("The GATE is actually close"));
-      break;
-    case GATE_RISING:      
-      servoPos = GATE_OPENED;
-      digitalWrite(OUT_LIGHT_BELL, LOW);       
-      Serial.println(F("The GATE is going to be opened"));
-      break;
-    case GATE_OPEN:
-      digitalWrite(PASS_NOT_ALLOWED, LOW);
-      digitalWrite(PASS_ALLOWED, HIGH);
-      Serial.println(F("The GATE is actually open"));
-      break;
-    case GATE_LOWERING:
-      servoPos = GATE_CLOSED;
-      digitalWrite(PASS_ALLOWED, LOW);
-      digitalWrite(PASS_NOT_ALLOWED, HIGH);
-      Serial.println(F("A new train is coming! Start closing the GATE."));
-      Serial.println(F("The GATE is going to be closed"));
-      break;
-    case GATE_WAIT:
-      Serial.println(F("Train passed, but we have to wait a little time more"));
-      break;
+
+/////////// STATE MACHINE FUNCTIONS //////////////////
+
+// This function will be executed before enter next state
+void onEnter() {
+  if (fsm.getCurrentState() == stGateClose ) {
+    Serial.println(F("The GATE is actually close"));
+  }
+  else if (fsm.getCurrentState() == stMoveUp ) {
+    theGate.write(OPEN_POSITION);
+    Serial.println(F("The GATE is going to be opened"));
+  }
+  else if (fsm.getCurrentState() == stGateOpen ) {
+    digitalWrite(STOP_PASS, LOW);
+    digitalWrite(FREE_PASS, HIGH);
+    digitalWrite(OUT_LIGHT_BELL, LOW);
+    Serial.println(F("The GATE is actually open"));
+  }
+  else if (fsm.getCurrentState() == stMoveDown ) {
+    theGate.write(CLOSE_POSITION);
+    digitalWrite(STOP_PASS, HIGH);
+    digitalWrite(FREE_PASS, LOW);
+    Serial.println(F("A new train is coming! Start closing the GATE."));
+    Serial.println(F("The GATE is going to be closed"));
+  }
+  else if (fsm.getCurrentState() == stWaitTrain ) {
+    delay(1);
+    Serial.println(F("Train passed, but we have to wait a little time more"));
   }
 }
 
 // Blink and play the bell while gate is moving or closed
-void blinkAndHorn(){
-  blinker.blink(true);
+void bewareOfTrains() {
+  static bool level = LOW;
+  static uint32_t bTime;
+
+  if (millis() - bTime >= BLINK_TIME ) {
+    level = !level;
+    bTime = millis();
+    digitalWrite(OUT_LIGHT_BELL, level);
+  }
 }
 
 
-// Setup the State Machine
-void setupStateMachine() {  
-  /*
-    Follow the order of defined enumeration for the state definition (will be used as index)
-    You can add the states with 3 different overrides:
-    Add States => name, timeout, minTime, onEnter cb, onState cb, onLeave cb
-    Add States => name, timeout, onEnter cb, onState cb, onLeave cb
-    Add States => name, onEnter cb, onState cb, onLeave cb
-  */
-  stateMachine.AddState(stateName[GATE_OPEN], onEnter, nullptr, nullptr);  
-  stateMachine.AddState(stateName[GATE_LOWERING], MOVE_TIME, onEnter, blinkAndHorn, nullptr);  
-  stateMachine.AddState(stateName[GATE_CLOSE], onEnter, blinkAndHorn, nullptr); 
-  stateMachine.AddState(stateName[GATE_WAIT], WAIT_FREE, onEnter, blinkAndHorn, nullptr);  
-  stateMachine.AddState(stateName[GATE_RISING], MOVE_TIME, onEnter, blinkAndHorn, nullptr);
-  
-  // Add transitions with related trigger input callback functions  
-  stateMachine.AddTransition(GATE_OPEN, GATE_LOWERING, theTrainIsComing);
-  stateMachine.AddTransition(GATE_CLOSE, GATE_WAIT, theTrainIsGone);
+// Definition and modeling of the finite state machine
+void setupStateMachine() {
+  /* Create states and assign name and callback functions */
+  //                           name, minTime, onEnter cb, onRun cb, onExit cb
+  stGateOpen   = fsm.addState("Gate OPEN", onEnter, nullptr, nullptr);
+  stGateClose  = fsm.addState("Gate CLOSE", onEnter, bewareOfTrains, nullptr);
+  stMoveDown   = fsm.addState("Move gate DOWN", onEnter, bewareOfTrains, nullptr);
+  stMoveUp     = fsm.addState("Move gate UP", onEnter, bewareOfTrains, nullptr);
+  stWaitTrain  = fsm.addState("Wait Train", onEnter, bewareOfTrains, nullptr);
 
-  // Add "timed" transitions: it will be triggered on state timeout 
-  stateMachine.AddTransition(GATE_LOWERING, GATE_CLOSE);
-  stateMachine.AddTransition(GATE_WAIT, GATE_RISING);
-  stateMachine.AddTransition(GATE_RISING, GATE_OPEN);
+  stGateOpen->addTransition(stMoveDown, inTrainArrive);
+  stGateClose->addTransition(stWaitTrain, inTrainGone);
+  stMoveDown->addTransition(stGateClose, MOVE_TIME);
+  stMoveUp->addTransition(stGateOpen, MOVE_TIME);
+  stWaitTrain->addTransition(stMoveUp, WAIT_FREE_TIME);
+
+  /* Set initial state and start the Machine State */
+  fsm.setInitialState(stGateOpen);
+  fsm.start();
+  Serial.print("Active state: ");
+  Serial.println(fsm.getActiveStateName());
+  Serial.println();
+  digitalWrite(FREE_PASS, HIGH);
 }
 
 
@@ -105,37 +107,36 @@ void setup() {
   // Input/Output configuration
   pinMode(SIG_TRAIN_IN, INPUT_PULLUP);
   pinMode(SIG_TRAIN_OUT, INPUT_PULLUP);
-  pinMode(PASS_NOT_ALLOWED, OUTPUT);
-  pinMode(PASS_ALLOWED, OUTPUT);
+  pinMode(STOP_PASS, OUTPUT);
+  pinMode(FREE_PASS, OUTPUT);
 
   Serial.begin(115200);
-  Serial.println(F("Starting State Machine...\n"));
+  Serial.println("Starting State Machine...\n");
   setupStateMachine();
-  
-  onEnter();    // Call first time the onEnter() function to set outputs
-  Serial.print(F("Active state: "));
-  Serial.println(stateMachine.ActiveStateName());
 
   theGate.attach(SERVO_PIN);
 }
 
+
 void loop() {
-  theGate.write(servoPos);
 
-  // Update State Machine
-  stateMachine.Update(); 
+  // Update the input variables according to the signal inputs
+  inTrainGone = digitalRead(SIG_TRAIN_OUT) == LOW;
+  inTrainArrive = digitalRead(SIG_TRAIN_IN) == LOW;
 
-  // Update the bool variables according to the signal inputs
-  theTrainIsGone = digitalRead(SIG_TRAIN_OUT) == LOW;
-  theTrainIsComing = digitalRead(SIG_TRAIN_IN) == LOW;
+  // Reset enter time so timeout became longer enough
+  // to wait two ore more trains one after the other
+  if (inTrainArrive && fsm.getCurrentState() == stWaitTrain) {
+    stWaitTrain->resetEnterTime();
 
-  if (theTrainIsComing) {
-    // Reset enter time of GATE_WAIT so timeout became longer enough
-    // to wait two ore more trains one after the other 
-    stateMachine.SetEnteringTime(GATE_WAIT);
-    if (stateMachine.GetState() == GATE_WAIT ) {
-      delay(500);
+    static uint32_t pTime;
+    if (millis() - pTime > 500) {
+      pTime = millis();
       Serial.println(F("Another train is arriving, wait more time!"));
     }
   }
+
+  // Run State Machine
+  // Outputs will be handled inside onEnter callback function
+  fsm.execute();
 }
