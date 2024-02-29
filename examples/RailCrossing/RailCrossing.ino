@@ -99,21 +99,21 @@ void setupStateMachine() {
   Serial.print("Active state: ");
   Serial.println(fsm.getActiveStateName());
   Serial.println();
-  digitalWrite(FREE_PASS, HIGH);
+  
 }
 
 
 void setup() {
-  // Input/Output configuration
-  pinMode(SIG_TRAIN_IN, INPUT_PULLUP);
-  pinMode(SIG_TRAIN_OUT, INPUT_PULLUP);
-  pinMode(STOP_PASS, OUTPUT);
-  pinMode(FREE_PASS, OUTPUT);
-
   Serial.begin(115200);
   Serial.println("Starting State Machine...\n");
   setupStateMachine();
-
+  // Input/Output configuration
+  pinMode(SIG_TRAIN_IN, INPUT_PULLUP);
+  pinMode(SIG_TRAIN_OUT, INPUT_PULLUP);
+  pinMode(OUT_LIGHT_BELL, OUTPUT);
+  pinMode(STOP_PASS, OUTPUT);
+  pinMode(FREE_PASS, OUTPUT);
+  digitalWrite(FREE_PASS, HIGH);
   theGate.attach(SERVO_PIN);
 }
 
@@ -140,3 +140,5 @@ void loop() {
   // Outputs will be handled inside onEnter callback function
   fsm.execute();
 }
+
+
