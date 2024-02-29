@@ -6,7 +6,7 @@ ___
 
 States represent the different situations in which the machine can be at any time. The transitions connect two states, and are associated with a trigger condition which carries out the change of state (if you take a look at the examples included, you will find some different way for triggering a transition).
 
-To update the machine, you must call the `execute()` function in your `loop()`, which checks for transitions that have the current state as input and associated conditions.
+To update the machine, call the `execute()` function, which checks for transitions that have the current state as input and associated conditions.
 
 If any of the transitions associated with the current state satisfy the trigger condition, the machine goes into the next state.
 
@@ -18,8 +18,8 @@ StateMachine fsm;
 
 ![SFC_esempio](https://user-images.githubusercontent.com/27758688/125982036-0eab0bb2-ed13-4101-af5c-6e49e82908fd.png)
 
-### State definition and Callback functions
-Each of the states of the machine can be binded with a callback function that will be executed when the state is activated (on enter), when it is left (on exit) and while it is running (on run). 
+### State definition and callback functions
+Each states can be binded with a callback function that will be executed when the state is activated (on enter), when is left (on exit) and while is running (on run). 
 
 For each state it is also possible to define an optional maximum and a minimum duration time.
 
