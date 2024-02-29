@@ -9,7 +9,7 @@
 #define OUT_LIGHT_BELL    13
 
 // After the train has passed, wait a little time to be sure
-#define MOVE_TIME         1000   // Time needed for GATE moving (up and down)
+#define MOVE_TIME         1500   // Time needed for GATE moving (up and down)
 #define WAIT_FREE_TIME    10000  // Wait time after train has gone (in case another train is arriving)
 #define BLINK_TIME 250
 
@@ -33,6 +33,21 @@ State* stMoveUp;      // The rail crossing gate is moving up (free)
 State* stMoveDown;    // The rail crossing gate is moving down (stop)
 State* stWaitTrain;   // Wait if another train is passing before move up the gate
 
+void runServoSlow() {
+  static uint8_t actualPos;
+  static uint32_t stepTime;
+
+  if (millis() - stepTime > 10) {
+    stepTime = millis();
+    if (actualPos < servoPos)
+      actualPos++;
+    if (actualPos > servoPos)
+      actualPos--;
+
+    theGate.write(actualPos);
+  }
+}
+
 
 /////////// STATE MACHINE FUNCTIONS //////////////////
 
@@ -42,7 +57,7 @@ void onEnter() {
     Serial.println(F("The GATE is actually close"));
   }
   else if (fsm.getCurrentState() == stMoveUp ) {
-    theGate.write(OPEN_POSITION);
+    servoPos = OPEN_POSITION;
     Serial.println(F("The GATE is going to be opened"));
   }
   else if (fsm.getCurrentState() == stGateOpen ) {
@@ -52,7 +67,7 @@ void onEnter() {
     Serial.println(F("The GATE is actually open"));
   }
   else if (fsm.getCurrentState() == stMoveDown ) {
-    theGate.write(CLOSE_POSITION);
+    servoPos = CLOSE_POSITION;
     digitalWrite(STOP_PASS, HIGH);
     digitalWrite(FREE_PASS, LOW);
     Serial.println(F("A new train is coming! Start closing the GATE."));
@@ -119,6 +134,8 @@ void setup() {
 
 
 void loop() {
+  // Smoot run servo to taret position
+  runServoSlow();
 
   // Update the input variables according to the signal inputs
   inTrainGone = digitalRead(SIG_TRAIN_OUT) == LOW;
