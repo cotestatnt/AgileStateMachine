@@ -88,9 +88,9 @@ Take a look at the examples with some "scholastic" problems solved with a state 
 ```c++
 // Create new Finite State Machine
 StateMachine fsm;
-
 ```
-### Public methods of StateMachine class
+
+### Public methods of `StateMachine` class
 ```c++
 
 // Add a State to State Machine
@@ -129,7 +129,42 @@ const char* ActiveStateName();
 
 // Get the number of defined finite states
 const int GetNumStates()
+```
 
+### Public methods of `State` class
+```c++
+
+// Add a transition to state
+Transition* addTransition(State *out, bool &trigger);
+Transition* addTransition(State *out, condition_cb trigger);
+Transition* addTransition(State *out, uint32_t timeout);
+
+// Add an action to state
+Action* 	addAction(uint8_t type, bool &target, uint32_t _time = 0);
+
+// Get the state index (the position as added in the linked list of StateMachine class)
+uint8_t		  getIndex() ;
+
+// True if state is running for a time greater then max time
+bool 		    getTimeout() ;
+
+// Set the max time for current state
+void 		    setStateMaxTime(uint32_t _time);
+
+// Set the min time for current state (before exit)
+void 		    setStateMinTime(uint32_t _time);
+
+// Reset the enter time (usefull for extend the running time over timeout)
+void 	      resetEnterTime();
+
+// Get the time when state has entered
+uint32_t 	  getEnterTime();
+
+// Get the state label name
+const char*   getStateName();
+
+
+```
 
 ### Supported boards
 The library works virtually with every boards supported by Arduino framework (no hardware dependency)
