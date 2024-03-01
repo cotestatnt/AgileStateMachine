@@ -23,7 +23,7 @@ class State
 			m_maxTime(max),
 			m_onEntering(entering),
 			m_onRunning(running),
-			m_onLeaving(leaving) { }
+			m_onLeaving(leaving) {}
 
 		State(const char *name) {
 			State(name, 0, 0, nullptr, nullptr, nullptr);

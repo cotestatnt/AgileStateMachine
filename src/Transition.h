@@ -15,23 +15,25 @@ class Transition
 		Transition(State *out, uint32_t timeout) : m_outState(out), m_timeout(timeout) {}
 
 		bool trigger( uint32_t enterTime) {
-			// Check if transition can be activated on timeout
-			if (m_timeout != 0) {
-				if (millis() - enterTime >= m_timeout) {
-					return true;
-				}
-			}
 
-			// Trigger transition on callback function result if defined
-			else if (m_trigger_cb != nullptr) {
+			// Trigger on callback function result
+			if (m_trigger_cb != nullptr) {
 				return m_trigger_cb();
 			}
 
-			// Trigger transition on bool variable value == true
+			// Trigger on bool variable
 			else if (m_trigger_var != nullptr) {
 				return *(m_trigger_var);
 			}
 
+			// Trigger on timeout
+			else if (m_timeout > 0) {
+				if (millis() - enterTime >= m_timeout) {
+				return true;
+				}
+			}
+
+			// No trigger
 			return false;
 		}
 
