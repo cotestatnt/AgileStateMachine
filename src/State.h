@@ -27,8 +27,6 @@ class State
 			m_onLeaving(exit),
 			m_onRunning(run) {}
 
-
-
 		State(const char *name) {
 			State(name, 0, 0, nullptr, nullptr, nullptr);
 		}
@@ -76,8 +74,8 @@ class State
 		uint32_t 		m_maxTime = 0;   // 0 -> No timeout
 		uint32_t 		m_enterTime;
 		state_cb 		m_onEntering;
-		state_cb 		m_onRunning;
 		state_cb 		m_onLeaving;
+		state_cb 		m_onRunning;
 
 		uint8_t         m_stateIndex = 0;
 		bool 			m_timeout = false;

@@ -30,11 +30,11 @@ public:
 	}
 
 	State* addState(const char *name, uint32_t min, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
-		return addState(name, min, 0, enter, run, exit);
+		return addState(name, min, 0, enter, exit, run);
 	}
 
 	State* addState(const char *name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
-		return addState(name, 0, 0, enter, run, exit);
+		return addState(name, 0, 0, enter, exit, run);
 	}
 
 	void setCurrentState(State *newState, bool callOnEntering = true, bool callOnLeaving = true);
