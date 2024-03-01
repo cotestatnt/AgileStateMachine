@@ -198,5 +198,6 @@ const char* getStateName();
 ### Supported boards
 The library works virtually with every boards supported by Arduino framework (no hardware dependency)
 
++ 1.0.1 Callback state function in a more convenient order
 + 1.0.0 Initial version
 
