@@ -15,14 +15,27 @@ using state_cb = void (*)();
 class StateMachine
 {
 public:
-	// Default constructor
+	// Default constructor/destructor
 	StateMachine(){};
+	~StateMachine(){};
 
-	State* addState(const char *name);
-	State* addState(const char *name, uint32_t min, uint32_t max);
-	State* addState(const char *name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr);
-	State* addState(const char *name, uint32_t min = 0, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr);
 	State* addState(const char *name, uint32_t min, uint32_t max, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr);
+
+	State* addState(const char *name) {
+		return addState(name, 0, 0, nullptr, nullptr, nullptr);
+	}
+
+	State* addState(const char *name, uint32_t min, uint32_t max) {
+		return addState(name, min, max, nullptr, nullptr, nullptr);
+	}
+
+	State* addState(const char *name, uint32_t min, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
+		return addState(name, min, 0, enter, run, exit);
+	}
+
+	State* addState(const char *name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
+		return addState(name, 0, 0, enter, run, exit);
+	}
 
 	void setCurrentState(State *newState, bool callOnEntering = true, bool callOnLeaving = true);
 

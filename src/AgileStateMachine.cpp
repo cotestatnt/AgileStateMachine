@@ -1,25 +1,6 @@
 #include "AgileStateMachine.h"
 
 
-State* StateMachine::addState(const char *name)
-{
-	return addState(name, 0, 0, nullptr, nullptr, nullptr);
-}
-
-State* StateMachine::addState(const char *name, uint32_t min, uint32_t max) {
-	return addState(name, min, max, nullptr, nullptr, nullptr);
-}
-
-State* StateMachine::addState(const char *name, uint32_t min, state_cb enter, state_cb exit, state_cb run)
-{
-	return addState(name, min, 0, enter, run, exit);
-}
-
-State* StateMachine::addState(const char *name, state_cb enter, state_cb exit, state_cb run)
-{
-	return addState(name, 0, 0, enter, run, exit);
-}
-
 State* StateMachine::addState(const char *name, uint32_t min, uint32_t max, state_cb enter, state_cb exit, state_cb run)
 {
 	State *state = new State(name, min, max, enter, exit, run);

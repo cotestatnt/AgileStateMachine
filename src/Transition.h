@@ -10,6 +10,8 @@ using condition_cb = bool (*)();
 class Transition
 {
     public:
+		~Transition(){};
+
 		Transition(State *out, bool &trigger) : m_outState(out), m_trigger_var(&trigger) {}
 		Transition(State *out, condition_cb trigger) : m_outState(out), m_trigger_cb(trigger) {}
 		Transition(State *out, uint32_t timeout) : m_outState(out), m_timeout(timeout) {}

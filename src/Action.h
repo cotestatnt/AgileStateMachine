@@ -11,6 +11,8 @@ class Action
     public:
 	    enum Type {N, S, R, L, D, RE, FE};
 
+		~Action(){};
+
 	    Action(State *state, uint8_t type, bool *target,  uint32_t time = 0)
             : m_state(state), m_actionType(type), m_actionTarget(target), m_delay(time) {}
 

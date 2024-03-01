@@ -15,6 +15,8 @@ using state_cb = void (*)();
 class State
 {
     public:
+		~State(){};
+
 	   	State(const char *name, uint32_t min, uint32_t max,
 			state_cb enter, state_cb exit, state_cb run )
 			:
@@ -24,6 +26,8 @@ class State
 			m_onEntering(enter),
 			m_onLeaving(exit),
 			m_onRunning(run) {}
+
+
 
 		State(const char *name) {
 			State(name, 0, 0, nullptr, nullptr, nullptr);
