@@ -3,61 +3,47 @@
 
 Transition* State::addTransition(State *out, bool &trigger) {
     Transition* tr = new Transition(out, trigger);
-    m_transitions.add(tr);
+    m_transitions.append(tr);
     return tr;
 }
 
 Transition* State::addTransition(State *out, condition_cb trigger) {
     Transition* tr = new Transition(out, trigger);
-    m_transitions.add(tr);
+    m_transitions.append(tr);
     return tr;
 }
 Transition* State::addTransition(State *out, uint32_t timeout) {
     Transition* tr = new Transition(out, timeout);
-    m_transitions.add(tr);
+    m_transitions.append(tr);
     return tr;
 }
 
 Action* State::addAction(uint8_t type, bool &target, uint32_t _time ) {
     Action* action = new Action(this, type, &target, _time);
-    m_actions.add(action);
+    m_actions.append(action);
     return action;
 }
 
-void State::clearTransitions() {
-    Transition *transition = nullptr;
-	for(int i = 0; i < m_transitions.size(); i++) {
-		transition = m_transitions.get(i);
-        transition->reset();
-    }
-}
 
 State* State::runTransitions() {
-    Transition *transition = nullptr;
-	for(int i = 0; i < m_transitions.size(); i++) {
-		transition = m_transitions.get(i);
+    for (Transition *tr = m_transitions.first(); tr != nullptr; tr = m_transitions.next()) {
         // Pass m_enterTime to activate transition on timeout (if defined)
-        if (transition->trigger(m_enterTime)) {
-            transition->reset();
-            return transition->getOutputState();
+        if (tr->trigger(m_enterTime)) {
+            return tr->getOutputState();
         }
     }
     return nullptr;
 }
 
 void State::runActions() {
-    Action *action = nullptr;
-	for(int i = 0; i < m_actions.size(); i++){
-		action = m_actions.get(i);
+    for (Action *action = m_actions.first(); action != nullptr; action = m_actions.next()) {
         action->execute();
     }
 }
 
 
 void State::clearActions() {
-    Action *action = nullptr;
-	for(int i = 0; i < m_actions.size(); i++){
-		action = m_actions.get(i);
+    for (Action *action = m_actions.first(); action != nullptr; action = m_actions.next()) {
         action->clear();
     }
 }
@@ -85,7 +71,11 @@ bool State::getTimeout() {
 	return m_timeout;
 }
 
-uint32_t State::getEnteringTime() {
+void State::resetEnterTime() {
+  m_enterTime = millis();
+}
+
+uint32_t State::getEnterTime() {
 	return m_enterTime;
 }
 

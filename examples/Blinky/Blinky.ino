@@ -1,4 +1,4 @@
-#include "AgileStateMachine.h"
+#include <AgileStateMachine.h>
 
 #if defined(ESP32)
 #define PREV_BUTTON  	5
@@ -44,7 +44,7 @@ void onEntering(){
 
 // A callback function for triggerin transition
 // set argument target true only on rising edge
-void xNextButton(bool& target) {
+bool xNextButton() {
 	static bool risingEdge = false;    	// store last button state
 	static uint32_t pushTime;			// for button debouncing
 
@@ -52,12 +52,13 @@ void xNextButton(bool& target) {
 		risingEdge = true;
 		if( millis() - pushTime > 200){
 			pushTime = millis();
-			target = true;
+			return true;
 		}
 	}
 	else if ( millis() - pushTime > 200 && risingEdge) {
 		risingEdge = false;
 	}
+	return false;
 }
 
 
@@ -68,11 +69,6 @@ void setupStateMachine(){
 	State* blink1 = myFSM.addState("Blink1", 500, onEntering, nullptr, onLeaving);
 	State* blink2 = myFSM.addState("Blink2", 500, onEntering, nullptr, onLeaving);
 	State* blink3 = myFSM.addState("Blink3", 500, onEntering, nullptr, onLeaving);
-
-	// Serial.printf("Index: %d, address 0x%x\n", blinkOff->getIndex(), blinkOff);
-	// Serial.printf("Index: %d, address 0x%x\n", blink1->getIndex(), blink1);
-	// Serial.printf("Index: %d, address 0x%x\n", blink2->getIndex(), blink2);
-	// Serial.printf("Index: %d, address 0x%x\n", blink3->getIndex(), blink3);
 
 	// Add transitions to target state and trigger condition (callback function or bool var)
 	blink1->addTransition(blink2, xNextButton);			// xNextButton is a callback function
@@ -88,7 +84,7 @@ void setupStateMachine(){
 	blink3->addAction(Action::Type::L, xActionDelayed, 3000);
 
 	// Start the Machine State
-	myFSM.setInitialState(blink1);
+	myFSM.setInitialState(blinkOff);
 	myFSM.start();
 }
 
@@ -100,7 +96,7 @@ void setup() {
 	pinMode(LED, OUTPUT);
 
 	Serial.begin(115200);
-	Serial.println(F("Starting State Machine...\n"));
+	Serial.println(F("\n\nStarting State Machine...\n"));
 	setupStateMachine();
 
 	// Initial state

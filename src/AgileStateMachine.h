@@ -29,6 +29,7 @@ public:
 	void setInitialState(State* state) { m_currentState = state;}
 
 	void start();
+
 	void stop();
 
 	const int GetStatesNumber();
@@ -37,12 +38,9 @@ public:
 
 	State* getCurrentState();
 
-	State* getNextState();
-
-	uint32_t getLastEnterTime();
-
 	bool execute();
 
+	uint32_t getLastEnterTime();
 
 
 private:
@@ -51,7 +49,6 @@ private:
 	friend class Transition;
 
 	bool     m_started		= false;
-	State 	*m_nextState 	= nullptr;
 	State 	*m_currentState = nullptr;
 	LinkedList<State *> m_states;
 };

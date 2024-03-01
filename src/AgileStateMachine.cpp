@@ -23,20 +23,13 @@ State* StateMachine::addState(const char *name, state_cb onEntering, state_cb on
 State* StateMachine::addState(const char *name, uint32_t min, uint32_t max, state_cb enter, state_cb run, state_cb exit)
 {
 	State *state = new State(name, min, max, enter, run, exit);
-
 	state->setIndex(m_states.size());
-	m_states.add(state);
+	m_states.append(state);
 	m_currentState = state;
-
 	return state;
 }
 
 void StateMachine::start() {
-	State *state = nullptr;
-	for(int i = 0; i < m_states.size(); i++){
-		state = m_states.get(i);
-		state->clearTransitions();
-	}
 	m_started = true;
 }
 
@@ -52,10 +45,7 @@ bool StateMachine::execute() {
 		return false;
 	}
 
-	State *state = nullptr;
-	for(int i = 0; i < m_states.size(); i++){
-		state = m_states.get(i);
-		// delayMicroseconds(10);
+	for (State *state = m_states.first(); state != nullptr; state = m_states.next()) {
 
 		if (state == m_currentState) {
 
@@ -66,7 +56,7 @@ bool StateMachine::execute() {
 			}
 
 			// Check triggers for current state
-			m_nextState = state->runTransitions();
+			State *m_nextState = state->runTransitions();
 
 			// One of the transitions has triggered, set the new state
 			if (m_nextState != nullptr) {
@@ -109,9 +99,6 @@ bool StateMachine::execute() {
 	return false;
 }
 
-State* StateMachine::getNextState() {
-	return m_nextState;
-}
 
 State* StateMachine::getCurrentState() {
 	return m_currentState;
@@ -127,7 +114,7 @@ const int StateMachine::GetStatesNumber() {
 
 
 uint32_t StateMachine::getLastEnterTime() {
-	return m_currentState->getEnteringTime();
+	return m_currentState->getEnterTime();
 }
 
 void StateMachine::setCurrentState(State *newState, bool callOnEntering, bool callOnLeaving) {

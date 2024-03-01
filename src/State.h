@@ -41,32 +41,33 @@ class State
 			State(name, 0, min, entering, running, leaving);
 		}
 
-		void 		setIndex(uint8_t index);
-		uint8_t		getIndex() ;
-		void 		setTimeout(uint32_t preset);
-		bool 		getTimeout() ;
-		uint32_t 	getEnteringTime();
-		const char* getStateName();
+		void 		 setIndex(uint8_t index);
+		uint8_t		 getIndex() ;
+		void 		 setTimeout(uint32_t preset);
+		bool 		 getTimeout() ;
 
-		void 		setStateMaxTime(uint32_t _time);
-		void 		setStateMinTime(uint32_t _time);
+		void 	     resetEnterTime();
+		uint32_t 	 getEnterTime();
+		const char*  getStateName();
 
-		Transition* addTransition(State *out, bool &trigger);
-		Transition* addTransition(State *out, condition_cb trigger);
-		Transition* addTransition(State *out, uint32_t timeout);
-		State* 		runTransitions() ;
-		void 		clearTransitions() ;
+		void 		 setStateMaxTime(uint32_t _time);
+		void 		 setStateMinTime(uint32_t _time);
 
-		Action* 	addAction(uint8_t type, bool &target, uint32_t _time = 0);
-		uint8_t 	getActions();
-		void 		runActions();
-		void 		clearActions();
+		Transition*  addTransition(State *out, bool &trigger);
+		Transition*  addTransition(State *out, condition_cb trigger);
+		Transition*  addTransition(State *out, uint32_t timeout);
+		State* 		 runTransitions();
+
+		Action* 	 addAction(uint8_t type, bool &target, uint32_t _time = 0);
+		uint8_t 	 getActions();
+		void 		 runActions();
+		void 		 clearActions();
 
 	protected:
 		friend class StateMachine;
 		friend class Transition;
 
-		const char *	m_stateName;
+		const char 	   *m_stateName;
 		uint32_t 		m_minTime = 0;   // 0 -> No min time
 		uint32_t 		m_maxTime = 0;   // 0 -> No timeout
 		uint32_t 		m_enterTime;
