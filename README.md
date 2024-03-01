@@ -48,7 +48,7 @@ fsm.start();
 ```
 
 ### Transition definition and trigger
-To connect two states, a transition need to be defined. The trigger of transition can be performed with a `void function(bool &)` or a `bool` variable. 
+To connect two states, a transition need to be defined. The trigger of transition can be performed with a `bool function()` or a `bool` variable. 
 Also the timeout of state itself can be used for triggering to next state. 
 
 ```cpp
