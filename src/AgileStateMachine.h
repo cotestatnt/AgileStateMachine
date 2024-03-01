@@ -45,7 +45,7 @@ public:
 
 	void stop();
 
-	const int GetStatesNumber();
+	int GetStatesNumber();
 
 	const char *getActiveStateName();
 

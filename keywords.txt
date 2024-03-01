@@ -5,9 +5,9 @@
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-State	KEYWORD1
-Action	KEYWORD1
-Transition	KEYWORD1
+State			KEYWORD1
+Action			KEYWORD1
+Transition		KEYWORD1
 StateMachine	KEYWORD1
 
 #######################################
