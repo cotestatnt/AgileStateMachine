@@ -1,5 +1,5 @@
 # AgileStateMachine
-Arduino/C++ library to simply and efficiently model and run a finite state machine.
+Arduino C++ library to simply and efficiently model and run a finite state machine.
 
 ___
 ### Introduction
@@ -54,20 +54,25 @@ if(fsm.getCurrentState()->getTimeout) {....}
 For each state you can define also a set of qualified **Actions**, that will be executed when state is active causing effect to the target bool variable
 
 ```cpp
-bool targetVar1, targetVar2;
-stExampleState->addAction(Action::Type::N, targetVar1);
-stAnotherState->addAction(Action::Type::R, targetVar2);
+bool targetVar1, targetVar2, targetVar3; 
+stExampleState->addAction(Action::Type::N, targetVar1);        // set targetVar1 to true when state is active
+stAnotherState->addAction(Action::Type::R, targetVar2);        // reset targetVar2 to false when state is active
+stAnotherState->addAction(Action::Type::D, targetVar3, 2000);  // targetVar3 == true 2000 milliseconds after state become active
 ```
 
 The library actually support this action qualifiers:
 
 | Action qualifier | Description | Short explanation on the effect | Duration |
 | :---: | :---: | :--- | :---: |
-| N | Non-stored | Action is active (target = TRUE) as long as the state input is active | NO |
-| R | Reset | Reset to FALSE the value of target variable | NO |
-| S | Set (or Stored) | Set to TRUE the value of target variable | NO |
-| L | time Limited | target = TRUE until the end of the set time or until the state is deactivated  | YES |
-| D | time Delayed | target = TRUE  after the set time has elapsed until the state is deactivated  | YES |
+| **N** | **N**on-stored | Action is active (target = TRUE) as long as the state input is active | NO |
+| **R** | **R**eset | Reset to FALSE the value of target variable | NO |
+| **S** | **S**et (or Stored) | Set to TRUE the value of target variable | NO |
+| **L** | time **L**imited | target = TRUE until the end of the set time or until the state is deactivated  | YES |
+| **D** | time **D**elayed | target = TRUE after the set time has elapsed until the state is deactivated  | YES |
+| **RE** | **R**ising **E**dge | target = TRUE only once after the state is activated  | NO |
+| **FE** | **F**alling **E**dge | target = TRUE only once after the state is de-activated***  | NO |
+
+*** Since the state is not active anymore, target must bel cleared manually
 
 ### Examples
 
@@ -140,29 +145,28 @@ Transition* addTransition(State *out, condition_cb trigger);
 Transition* addTransition(State *out, uint32_t timeout);
 
 // Add an action to state
-Action* 	addAction(uint8_t type, bool &target, uint32_t _time = 0);
+Action* addAction(uint8_t type, bool &target, uint32_t _time = 0);
 
 // Get the state index (the position as added in the linked list of StateMachine class)
-uint8_t		  getIndex() ;
+uint8_t	getIndex();
 
 // True if state is running for a time greater then max time
-bool 		    getTimeout() ;
+bool getTimeout();
 
 // Set the max time for current state
-void 		    setStateMaxTime(uint32_t _time);
+void setStateMaxTime(uint32_t _time);
 
 // Set the min time for current state (before exit)
-void 		    setStateMinTime(uint32_t _time);
+void setStateMinTime(uint32_t _time);
 
 // Reset the enter time (usefull for extend the running time over timeout)
-void 	      resetEnterTime();
+void resetEnterTime();
 
 // Get the time when state has entered
-uint32_t 	  getEnterTime();
+uint32_t getEnterTime();
 
 // Get the state label name
-const char*   getStateName();
-
+const char* getStateName();
 
 ```
 
