@@ -77,10 +77,11 @@ The library actually support this action qualifiers:
 ### Examples
 
 Take a look at the examples with some "scholastic" problems solved with a state machine in the [examples folder](https://github.com/cotestatnt/AgileStateMachine/tree/main/examples):
- - [Blinky.ino](https://github.com/cotestatnt/AgileStateMachine/blob/master/examples/Blinky)
- - [PedestrianLight.ino](https://github.com/cotestatnt/AgileStateMachine/tree/master/examples/PedestrianLight)
+ - [StartStopMotor](https://github.com/cotestatnt/AgileStateMachine/tree/main/examples/StartStopMotor)
+ - [Blinky](https://github.com/cotestatnt/AgileStateMachine/blob/master/examples/Blinky)
+ - [PedestrianLight](https://github.com/cotestatnt/AgileStateMachine/tree/master/examples/PedestrianLight)
  - [AutomaticGate](https://github.com/cotestatnt/AgileStateMachine/blob/master/examples/AutomaticGate)
- - [RailCRossing.ino](https://github.com/cotestatnt/AgileStateMachine/blob/master/examples/RailCrossing)
+ - [RailCRossing](https://github.com/cotestatnt/AgileStateMachine/blob/master/examples/RailCrossing)
 
 <div style="content: flex">
 <img src="https://user-images.githubusercontent.com/27758688/125971825-ed89b51d-6441-474b-86a5-063bc1f96770.png" width="480">
