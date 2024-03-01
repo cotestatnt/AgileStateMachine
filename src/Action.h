@@ -22,14 +22,21 @@ class Action
 		bool* 		getTarget() const { return m_actionTarget; }
 
 	void clear() {
-		*m_actionTarget = false;
-		m_edge = false;
-		m_time = -1;
+		switch (m_actionType) {
+			case Type::N :
+			case Type::L :		
+			case Type::D :			
+			case Type::RE :
+			   *m_actionTarget = false;
+				m_edge = false;
+				m_time = -1;
+				break;
 
-		// Falling Edge
-		// target variable TRUE on falling edge
-		if (m_actionType == Type::FE)
-			*m_actionTarget = true;
+			// Falling Edge
+			// target variable TRUE on falling edge
+			case Type::FE :
+				*m_actionTarget = true;
+		}
 	}
 
 	void execute() {
