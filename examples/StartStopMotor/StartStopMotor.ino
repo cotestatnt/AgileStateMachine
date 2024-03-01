@@ -31,8 +31,8 @@ void onEntering() {
 void setupStateMachine() {
   // Create some states and assign name, min time and callback functions
   State* stIdle  = myFSM.addState("IDLE", onEntering, onLeaving);
-  State* stRun = myFSM.addState("RUN", 5000, onEntering, onLeaving);
-  State* stStop  = myFSM.addState("STOP", 1000, onEntering, onLeaving);
+  State* stRun = myFSM.addState("RUN", 5000, onEntering, onLeaving, nullptr);
+  State* stStop  = myFSM.addState("STOP", 1000, onEntering, onLeaving, nullptr);
   
   // Add transitions to target state and trigger condition 
   stIdle->addTransition(stRun, inStart);		
