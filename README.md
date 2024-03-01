@@ -73,21 +73,24 @@ if(fsm.getCurrentState()->getTimeout) {....}
 For each state you can define also a set of qualified **Actions**, that will be executed when state is active causing effect to the target bool variable
 
 ```cpp
-bool targetVar1, targetVar2, targetVar3; 
-stExampleState->addAction(Action::Type::N, targetVar1);        // set targetVar1 to true when state is active
+bool targetVar1, targetVar2, targetVar3;
+
+stExampleState->addAction(Action::Type::N, targetVar1);        // set targetVar1 to true while state is active (clear on exit)
 
 stAnotherState->addAction(Action::Type::R, targetVar2);        // reset targetVar2 to false when state is active
 
 stAnotherState->addAction(Action::Type::D, targetVar3, 2000);  // targetVar3 == true 2000 milliseconds after state become active
 ```
 
-The library actually support this action qualifiers:
+#
+
+The library support this action qualifiers:
 
 | Action qualifier | Description | Short explanation on the effect | Duration |
 | :---: | :---: | :--- | :---: |
 | **N** | **N**on-stored | Action is active (target = TRUE) as long as the state input is active | NO |
 | **R** | **R**eset | Reset to FALSE the value of target variable | NO |
-| **S** | **S**et (or Stored) | Set to TRUE the value of target variable | NO |
+| **S** | **S**et (or **S**tored) | Set to TRUE the value of target variable | NO |
 | **L** | time **L**imited | target = TRUE until the end of the set time or until the state is deactivated  | YES |
 | **D** | time **D**elayed | target = TRUE after the set time has elapsed until the state is deactivated  | YES |
 | **RE** | **R**ising **E**dge | target = TRUE only once after the state is activated  | NO |
