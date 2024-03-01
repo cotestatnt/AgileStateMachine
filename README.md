@@ -8,15 +8,19 @@ ___
 
 A **Transition** connect two states, and are associated with a boolean trigger condition.
 
+The **AgileStateMachine** library introduces great flexibility for using a finite state machine in the embedded world.
+The finite state machine can interact with the rest of the firmware:
+- using callback functions;
+- using "boolean" **Actions** (similar to what is done with PLCs);
+- using a mix between the two methodologies;
+
 To update the machine, call the `execute()` function, in order to checks transitions of current running state: if one of the transitions is triggered, the machine goes into the next state.
 
-```cpp
-/* The Finite State Machine */
-StateMachine fsm;
-
-```
-
 ![SFC_esempio](https://user-images.githubusercontent.com/27758688/125982036-0eab0bb2-ed13-4101-af5c-6e49e82908fd.png)
+
+
+
+#
 
 ### State definition and callback functions
 Each states can be binded up to three different callback functions that will be executed when the state is activated (on enter), when is left (on exit) and while is running (on run). 
@@ -24,10 +28,19 @@ Each states can be binded up to three different callback functions that will be 
 For each state it is also possible to define an optional maximum and a minimum duration time.
 
 If a callback function is not needed, simply use value `nullptr` or `NULL` instead of the name of function.
+```cpp
+/* The Finite State Machine */
+StateMachine fsm;
+
+```
+
 
 ```cpp
-State* stExampleState = fsm.addState("An Example State", onEnter, onRun, onExit);
-State* stAnotherState = fsm.addState("Another State", onEnter, nullptr, nullptr);
+State* stExampleState = fsm.addState("An Example State", onEnter, onExit, onRun);
+
+State* stAnotherStateA = fsm.addState("Another State", onEnter);
+
+State* stAnotherStateB = fsm.addState("Another State", onEnter, nullptr, onRun);
 
 /* Set initial state and start the Machine State */
 fsm.setInitialState(stExampleState);
@@ -39,9 +52,15 @@ To connect two states, a transition need to be defined. The trigger of transitio
 Also the timeout of state itself can be used for triggering to next state. 
 
 ```cpp
-stExampleState->addTransition(stAnotherState, aCallbackFunction);    // A callback function will be used as trigger
-stAnotherState->addTransition(stAnotherState, aBoolVariable);        // A bool variable will be used as trigger
-stAnotherState->addTransition(stGateClose, aTime);                   // An unsigned long variable will be used as timeout trigger
+stExampleState->addTransition(stAnotherStateA, aCallbackFunction);   // A callback function will be used as trigger
+
+stAnotherStateA->addTransition(stAnotherStateB, aBoolVariable);      // A bool variable will be used as trigger
+
+stAnotherStateA->addTransition(stExampleState, aTime);               // An unsigned long variable will be used as timeout trigger
+
+stAnotherStateB->addTransition(stExampleState, ()[] {                // A lambda callback function will be used as trigger
+  return (digitalRead(input) == LOW);
+});              
 ```
 
 While running the State Machine, a State timeout can be checked with the method `bool getTimeout();`
@@ -56,7 +75,9 @@ For each state you can define also a set of qualified **Actions**, that will be 
 ```cpp
 bool targetVar1, targetVar2, targetVar3; 
 stExampleState->addAction(Action::Type::N, targetVar1);        // set targetVar1 to true when state is active
+
 stAnotherState->addAction(Action::Type::R, targetVar2);        // reset targetVar2 to false when state is active
+
 stAnotherState->addAction(Action::Type::D, targetVar3, 2000);  // targetVar3 == true 2000 milliseconds after state become active
 ```
 
@@ -102,9 +123,9 @@ StateMachine fsm;
 // Add a State to State Machine
 State* addState(const char *name);
 State* addState(const char *name, uint32_t min, uint32_t max);
-State* addState(const char *name, state_cb enter = nullptr, state_cb run = nullptr, state_cb exit = nullptr);
-State* addState(const char *name, uint32_t min = 0, state_cb enter = nullptr, state_cb run = nullptr, state_cb exit = nullptr);
-State* addState(const char *name, uint32_t min, uint32_t max, state_cb enter = nullptr, state_cb run = nullptr, state_cb exit = nullptr);
+State* addState(const char *name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr);
+State* addState(const char *name, uint32_t min = 0, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr);
+State* addState(const char *name, uint32_t min, uint32_t max, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr);
 
 // Start the State Machine
 void start();
