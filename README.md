@@ -63,11 +63,15 @@ The library actually support this action qualifiers:
 
 | Action qualifier | Description | Short explanation on the effect | Duration |
 | :---: | :---: | :--- | :---: |
-| N | Non-stored | Action is active (target = TRUE) as long as the state input is active | NO |
-| R | Reset | Reset to FALSE the value of target variable | NO |
-| S | Set (or Stored) | Set to TRUE the value of target variable | NO |
-| L | time Limited | target = TRUE until the end of the set time or until the state is deactivated  | YES |
-| D | time Delayed | target = TRUE  after the set time has elapsed until the state is deactivated  | YES |
+| **N** | **N**on-stored | Action is active (target = TRUE) as long as the state input is active | NO |
+| **R** | **R**eset | Reset to FALSE the value of target variable | NO |
+| **S** | **S**et (or Stored) | Set to TRUE the value of target variable | NO |
+| **L** | time **L**imited | target = TRUE until the end of the set time or until the state is deactivated  | YES |
+| **D** | time **D**elayed | target = TRUE after the set time has elapsed until the state is deactivated  | YES |
+| **RE** | **R**ising **E**dge | target = TRUE only once after the state is activated  | NO |
+| **FE** | **F**alling **E**dge | target = TRUE only once after the state is de-activated***  | NO |
+
+*** Since the state is not active anymore, target must bel cleared manually
 
 ### Examples
 
