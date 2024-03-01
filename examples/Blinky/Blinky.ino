@@ -1,15 +1,8 @@
 #include <AgileStateMachine.h>
 
-#if defined(ESP32)
 #define PREV_BUTTON  	5
 #define NEXT_BUTTON  	4
-#define LED 			RGB_BUILTIN
-#else
-#define PREV_BUTTON  	5
-#define NEXT_BUTTON  	4
-#define LED 			LED_BUILTIN
-#endif
-
+#define LED_BLINK 		LED_BUILTIN
 
 // Let's use an array for change blink time
 uint32_t blinkInterval = 1000;
@@ -21,8 +14,17 @@ StateMachine myFSM;
 // A variable for triggering transitions
 bool xPrevButton = false;
 
-bool xAction1Out = false;
-bool xActionDelayed = false;
+
+// Blink led. Frequency depends of selected state
+void blink() {	
+	static bool level = LOW;
+	static uint32_t bTime;
+	if (millis() - bTime >= blinkInterval ) {
+		bTime = millis();
+		level = !level;		
+		digitalWrite(LED_BLINK, level);
+	}
+}
 
 
 /////////// STATE MACHINE FUNCTIONS //////////////////
@@ -37,38 +39,30 @@ void onLeaving(){
 void onEntering(){
 	Serial.print(F("Entered state"));
 	Serial.println(myFSM.getActiveStateName());
+
 	blinkInterval = blinkTime[myFSM.getCurrentState()->getIndex()];
 	Serial.print(F("Blink time: "));
 	Serial.println(blinkInterval);
 }
 
-// A callback function for triggerin transition
-// set argument target true only on rising edge
+// A simple callback function for transition trigger (just button state)
 bool xNextButton() {
-	static bool risingEdge = false;    	// store last button state
-	static uint32_t pushTime;			// for button debouncing
-
-	if (!digitalRead(NEXT_BUTTON) && !risingEdge) {
-		risingEdge = true;
-		if( millis() - pushTime > 200){
-			pushTime = millis();
-			return true;
-		}
-	}
-	else if ( millis() - pushTime > 200 && risingEdge) {
-		risingEdge = false;
-	}
-	return false;
+	/* 
+	* Since we have defined a minimum run time for states, the button bounces  
+	* has no effects on state machine mechanism functioning
+	* (FSM can switch to next state only after min time has passed)	
+	*/
+	return (digitalRead(NEXT_BUTTON) == LOW);
 }
 
 
-// Setup the State Machine properties
+// Definition of the model of the finite state machine and start execution
 void setupStateMachine(){
 	// Create some states and assign name and callback functions
 	State* blinkOff = myFSM.addState("BlinkOFF", 500, onEntering, nullptr, onLeaving);
-	State* blink1 = myFSM.addState("Blink1", 500, onEntering, nullptr, onLeaving);
-	State* blink2 = myFSM.addState("Blink2", 500, onEntering, nullptr, onLeaving);
-	State* blink3 = myFSM.addState("Blink3", 500, onEntering, nullptr, onLeaving);
+	State* blink1 = myFSM.addState("Blink1", 1000, onEntering, nullptr, onLeaving);
+	State* blink2 = myFSM.addState("Blink2", 2000, onEntering, nullptr, onLeaving);
+	State* blink3 = myFSM.addState("Blink3", 3000, onEntering, nullptr, onLeaving);
 
 	// Add transitions to target state and trigger condition (callback function or bool var)
 	blink1->addTransition(blink2, xNextButton);			// xNextButton is a callback function
@@ -77,11 +71,7 @@ void setupStateMachine(){
 	blink2->addTransition(blink1, xPrevButton);
 	blink3->addTransition(blink2, xPrevButton);
 	blinkOff->addTransition(blink1, 5000);				// This transition is on state timeout (5s)
-
-	blink2->addAction(Action::Type::S, xAction1Out);
-	blink3->addAction(Action::Type::R, xAction1Out);
-	blink1->addAction(Action::Type::R, xAction1Out);
-	blink3->addAction(Action::Type::L, xActionDelayed, 3000);
+	blinkOff->addTransition(blink1, xNextButton);
 
 	// Start the Machine State
 	myFSM.setInitialState(blinkOff);
@@ -89,11 +79,10 @@ void setupStateMachine(){
 }
 
 
-
 void setup() {
 	pinMode(NEXT_BUTTON, INPUT_PULLUP);
 	pinMode(PREV_BUTTON, INPUT_PULLUP);
-	pinMode(LED, OUTPUT);
+	pinMode(LED_BLINK, OUTPUT);
 
 	Serial.begin(115200);
 	Serial.println(F("\n\nStarting State Machine...\n"));
@@ -103,26 +92,13 @@ void setup() {
 	Serial.print(F("Active state: "));
 	Serial.println(myFSM.getActiveStateName());
 	Serial.println();
+
+	// Set initial blink time
 	blinkInterval = blinkTime[myFSM.getCurrentState()->getIndex()];
 }
 
 
 void loop() {
-
-	// Blink led. Frequency depends of selected state
-	static bool level = LOW;
-	static uint32_t bTime;
-	if (blinkInterval > 0) {
-		if (millis() - bTime >= blinkInterval ) {
-			level = !level;
-			bTime = millis();
-			digitalWrite(LED, level);
-		}
-	}
-	else {
-		digitalWrite(LED, LOW);
-		delay(1);
-	}
 
 	// Read reset button input and update resetBlinky variable
 	xPrevButton = ! digitalRead(PREV_BUTTON);
@@ -132,23 +108,13 @@ void loop() {
 		Serial.println();
 	}
 
-	// Check FSM actions
-	if (xAction1Out) {
-		static uint32_t aTime;
-		if (millis() - aTime > 1000) {
-			aTime = millis();
-			Serial.println(F("xAction1Out == true"));
-		}
+	// If blinkInterval greater than 0, let's blink the led
+	if (blinkInterval > 0) {
+		blink();
 	}
-
-	if (xActionDelayed) {
-		static uint32_t aTime;
-		if (millis() - aTime > 1000) {
-			aTime = millis();
-			Serial.println(F("xActionDelayed == true"));
-		}
+	else {
+		digitalWrite(LED_BLINK, LOW);
+		delay(1);
 	}
 
 }
-
-
