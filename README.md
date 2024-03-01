@@ -15,6 +15,7 @@ The finite state machine can interact with the rest of the firmware:
 - using a mix between the two methodologies;
 
 To update the machine, call the `execute()` function, in order to checks transitions of current running state: if one of the transitions is triggered, the machine goes into the next state.
+The state machine is quick and efficient since it relies all on pointers (on the little Arduino UNO for example, the RailCrossing example run with a loop() time cycle of about 40/50uS)
 
 ![SFC_esempio](https://user-images.githubusercontent.com/27758688/125982036-0eab0bb2-ed13-4101-af5c-6e49e82908fd.png)
 
@@ -198,5 +199,6 @@ const char* getStateName();
 ### Supported boards
 The library works virtually with every boards supported by Arduino framework (no hardware dependency)
 
++ 1.0.1 Callback state function in a more convenient order
 + 1.0.0 Initial version
 
