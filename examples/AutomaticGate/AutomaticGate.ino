@@ -51,11 +51,11 @@ void onEntering(){
 // Definition and modeling of the finite state machine
 void setupStateMachine(){
 	/* Create states and assign name and callback functions */
-	stClosed = fsm.addState("Closed", onEntering, nullptr, onLeaving);
-	stClosing = fsm.addState("Closing", onEntering, nullptr, onLeaving);
-	stOpened = fsm.addState("Opened", onEntering, nullptr, onLeaving);
-	stOpening = fsm.addState("Opening", onEntering, nullptr, onLeaving);
-	stStopWait = fsm.addState("Stop & Wait", waitTime, onEntering, nullptr, onLeaving);
+	stClosed = fsm.addState("Closed", onEntering, onLeaving);
+	stClosing = fsm.addState("Closing", onEntering, onLeaving);
+	stOpened = fsm.addState("Opened", onEntering, onLeaving);
+	stOpening = fsm.addState("Opening", onEntering, onLeaving);
+	stStopWait = fsm.addState("Stop & Wait", waitTime, onEntering, onLeaving);
   
 	/* Define transitions to target state and trigger condition (callback function or bool var) */
 	stClosed->addTransition(stOpening, inStartButton);		

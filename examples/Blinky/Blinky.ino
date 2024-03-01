@@ -57,10 +57,10 @@ bool xNextButton() {
 // Definition of the model of the finite state machine and start execution
 void setupStateMachine(){
 	// Create some states and assign name and callback functions
-	State* blinkOff = myFSM.addState("BlinkOFF", 500, onEntering, nullptr, onLeaving);
-	State* blink1 = myFSM.addState("Blink1", 1000, onEntering, nullptr, onLeaving);
-	State* blink2 = myFSM.addState("Blink2", 2000, onEntering, nullptr, onLeaving);
-	State* blink3 = myFSM.addState("Blink3", 3000, onEntering, nullptr, onLeaving);
+	State* blinkOff = myFSM.addState("BlinkOFF", 500, onEntering, onLeaving);
+	State* blink1 = myFSM.addState("Blink1", 1000, onEntering, onLeaving);
+	State* blink2 = myFSM.addState("Blink2", 2000, onEntering, onLeaving);
+	State* blink3 = myFSM.addState("Blink3", 3000, onEntering, onLeaving);
 
 	// Add transitions to target state and trigger condition (callback function or bool var)
 	blink1->addTransition(blink2, xNextButton);			// xNextButton is a callback function

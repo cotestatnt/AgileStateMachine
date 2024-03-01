@@ -10,19 +10,19 @@ State* StateMachine::addState(const char *name, uint32_t min, uint32_t max) {
 	return addState(name, min, max, nullptr, nullptr, nullptr);
 }
 
-State* StateMachine::addState(const char *name, uint32_t min, state_cb enter, state_cb run, state_cb exit)
+State* StateMachine::addState(const char *name, uint32_t min, state_cb enter, state_cb exit, state_cb run)
 {
 	return addState(name, min, 0, enter, run, exit);
 }
 
-State* StateMachine::addState(const char *name, state_cb onEntering, state_cb onState, state_cb onLeaving)
+State* StateMachine::addState(const char *name, state_cb enter, state_cb exit, state_cb run)
 {
-	return addState(name, 0, 0, onEntering, onState, onLeaving);
+	return addState(name, 0, 0, enter, run, exit);
 }
 
-State* StateMachine::addState(const char *name, uint32_t min, uint32_t max, state_cb enter, state_cb run, state_cb exit)
+State* StateMachine::addState(const char *name, uint32_t min, uint32_t max, state_cb enter, state_cb exit, state_cb run)
 {
-	State *state = new State(name, min, max, enter, run, exit);
+	State *state = new State(name, min, max, enter, exit, run);
 	state->setIndex(m_states.size());
 	m_states.append(state);
 	m_currentState = state;

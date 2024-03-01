@@ -39,10 +39,10 @@ void onEnterCall() {
 // Definition and modeling of the finite state machine
 void setupStateMachine(){
 	/* Create states and assign name and callback functions */
-	State* stCall = fsm.addState("Call semaphore", onEnter, nullptr, onExit);
-	State* stGreen = fsm.addState("Green", onEnter, nullptr, onExit);
-	State* stRed = fsm.addState("Red", onEnter, nullptr, onExit);
-	State* stYellow = fsm.addState("Yellow", onEnter, nullptr, onExit);
+	State* stCall = fsm.addState("Call semaphore", onEnter, onExit);
+	State* stGreen = fsm.addState("Green", onEnter, onExit);
+	State* stRed = fsm.addState("Red", onEnter, onExit);
+	State* stYellow = fsm.addState("Yellow", onEnter, onExit);
 
 	stGreen->addTransition(stCall, inCallButton);
 	stCall->addTransition(stYellow, CALL_DELAY);

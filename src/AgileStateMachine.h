@@ -20,9 +20,9 @@ public:
 
 	State* addState(const char *name);
 	State* addState(const char *name, uint32_t min, uint32_t max);
-	State* addState(const char *name, state_cb enter = nullptr, state_cb run = nullptr, state_cb exit = nullptr);
-	State* addState(const char *name, uint32_t min = 0, state_cb enter = nullptr, state_cb run = nullptr, state_cb exit = nullptr);
-	State* addState(const char *name, uint32_t min, uint32_t max, state_cb enter = nullptr, state_cb run = nullptr, state_cb exit = nullptr);
+	State* addState(const char *name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr);
+	State* addState(const char *name, uint32_t min = 0, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr);
+	State* addState(const char *name, uint32_t min, uint32_t max, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr);
 
 	void setCurrentState(State *newState, bool callOnEntering = true, bool callOnLeaving = true);
 

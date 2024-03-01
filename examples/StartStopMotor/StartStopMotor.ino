@@ -30,11 +30,10 @@ void onEntering() {
 // Definition of the model of the finite state machine and start execution
 void setupStateMachine() {
   // Create some states and assign name, min time and callback functions
-  State* stIdle  = myFSM.addState("IDLE", onEntering, nullptr, onLeaving);
-  State* stRun = myFSM.addState("RUN", 5000, onEntering, nullptr, onLeaving);
-  State* stStop  = myFSM.addState("STOP", 1000, onEntering, nullptr, onLeaving);
+  State* stIdle  = myFSM.addState("IDLE", onEntering, onLeaving);
+  State* stRun = myFSM.addState("RUN", 5000, onEntering, onLeaving);
+  State* stStop  = myFSM.addState("STOP", 1000, onEntering, onLeaving);
   
-
   // Add transitions to target state and trigger condition 
   stIdle->addTransition(stRun, inStart);		
   stRun->addTransition(stStop, inStop);		

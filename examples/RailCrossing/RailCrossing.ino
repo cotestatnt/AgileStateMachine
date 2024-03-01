@@ -96,11 +96,11 @@ void bewareOfTrains() {
 void setupStateMachine() {
   /* Create states and assign name and callback functions */
   //                           name, minTime, onEnter cb, onRun cb, onExit cb
-  stGateOpen   = fsm.addState("Gate OPEN", onEnter, nullptr, nullptr);
-  stGateClose  = fsm.addState("Gate CLOSE", onEnter, bewareOfTrains, nullptr);
-  stMoveDown   = fsm.addState("Move gate DOWN", onEnter, bewareOfTrains, nullptr);
-  stMoveUp     = fsm.addState("Move gate UP", onEnter, bewareOfTrains, nullptr);
-  stWaitTrain  = fsm.addState("Wait Train", onEnter, bewareOfTrains, nullptr);
+  stGateOpen   = fsm.addState("Gate OPEN", onEnter);
+  stGateClose  = fsm.addState("Gate CLOSE", onEnter, nullptr, bewareOfTrains);
+  stMoveDown   = fsm.addState("Move gate DOWN", onEnter, nullptr, bewareOfTrains);
+  stMoveUp     = fsm.addState("Move gate UP", onEnter, nullptr, bewareOfTrains);
+  stWaitTrain  = fsm.addState("Wait Train", onEnter, nullptr, bewareOfTrains);
 
   stGateOpen->addTransition(stMoveDown, inTrainArrive);
   stGateClose->addTransition(stWaitTrain, inTrainGone);

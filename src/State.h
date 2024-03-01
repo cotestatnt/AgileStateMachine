@@ -16,14 +16,14 @@ class State
 {
     public:
 	   	State(const char *name, uint32_t min, uint32_t max,
-			state_cb entering, state_cb running, state_cb leaving )
+			state_cb enter, state_cb exit, state_cb run )
 			:
 			m_stateName(name),
 			m_minTime(min),
 			m_maxTime(max),
-			m_onEntering(entering),
-			m_onRunning(running),
-			m_onLeaving(leaving) {}
+			m_onEntering(enter),
+			m_onLeaving(exit),
+			m_onRunning(run) {}
 
 		State(const char *name) {
 			State(name, 0, 0, nullptr, nullptr, nullptr);
@@ -33,12 +33,12 @@ class State
 			State(name, min, max, nullptr, nullptr, nullptr);
 		}
 
-		State(const char *name, state_cb entering = nullptr, state_cb running= nullptr, state_cb leaving= nullptr) {
-			State(name, 0, 0, entering, running, leaving);
+		State(const char *name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
+			State(name, 0, 0, enter, exit, run);
 		}
 
-		State(const char *name, uint32_t min = 0, state_cb entering = nullptr, state_cb running = nullptr, state_cb leaving= nullptr) {
-			State(name, 0, min, entering, running, leaving);
+		State(const char *name, uint32_t min = 0, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
+			State(name, 0, min, enter, exit, run);
 		}
 
 		void 		 setIndex(uint8_t index);
