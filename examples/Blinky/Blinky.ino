@@ -14,7 +14,6 @@ StateMachine myFSM;
 // A variable for triggering transitions
 bool xPrevButton = false;
 
-
 // Blink led. Frequency depends of selected state
 void blink() {	
 	static bool level = LOW;
@@ -25,7 +24,6 @@ void blink() {
 		digitalWrite(LED_BLINK, level);
 	}
 }
-
 
 /////////// STATE MACHINE FUNCTIONS //////////////////
 
