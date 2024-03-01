@@ -51,7 +51,7 @@ bool StateMachine::execute() {
 
 			if (m_currentState->m_minTime > 0) {
 				if (millis() - m_currentState->m_enterTime < m_currentState->m_minTime)	{
-					return false;
+					continue;
 				}
 			}
 
@@ -61,7 +61,7 @@ bool StateMachine::execute() {
 			// One of the transitions has triggered, set the new state
 			if (m_nextState != nullptr) {
 
-				// Clear the actions (N, D and L) before exit actual state
+				// Clear the actions before exit actual state
 				if (m_currentState->getActions()){
 					m_currentState->clearActions();
 				}

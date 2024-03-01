@@ -9,7 +9,7 @@ class State;
 class Action
 {
     public:
-	    enum Type {N, S, R, L, D};
+	    enum Type {N, S, R, L, D, RE, FE};
 
 	    Action(State *state, uint8_t type, bool *target,  uint32_t time = 0)
             : m_state(state), m_actionType(type), m_actionTarget(target), m_delay(time) {}
@@ -20,28 +20,14 @@ class Action
 		bool* 		getTarget() const { return m_actionTarget; }
 
 	void clear() {
-		switch (m_actionType) {
-			case Type::N :
-				*m_actionTarget = false;
-				break;
+		*m_actionTarget = false;
+		m_edge = false;
+		m_time = -1;
 
-			// Time Limited:
-			// target variable TRUE until the end of the set time (FALSE on state exit)
-			case Type::L :
-				*m_actionTarget = false;
-				m_edge = false;
-				m_time = -1;
-				break;
-
-			// Time Delayed:
-			// target variable TRUE after the set time has elapsed (FALSE on state exit)
-			case Type::D :
-				*m_actionTarget = false;
-				m_edge = false;
-				m_time = -1;
-				break;
-		}
-
+		// Falling Edge
+		// target variable TRUE on falling edge
+		if (m_actionType == Type::FE)
+			*m_actionTarget = true;
 	}
 
 	void execute() {
@@ -83,11 +69,23 @@ class Action
 				if (!m_edge) {
 					m_time = millis();
 					m_edge = true;
+					*m_actionTarget = false;
 				}
 
 				if ((millis() - m_time) > m_delay && m_edge && m_time > 0) {
 					*m_actionTarget = true;
 					m_time = -1; // Action executed
+				}
+				break;
+
+			// Rising Edge
+			// target variable TRUE on rising edge
+			case Type::RE :
+				*m_actionTarget = false;
+
+				if (!m_edge) {
+					m_edge = true;
+					*m_actionTarget = true;
 				}
 				break;
 		}
