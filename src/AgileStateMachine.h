@@ -18,24 +18,37 @@ public:
 	// Default constructor/destructor
 	StateMachine(){};
 	~StateMachine(){};
-
-	State* addState(const char *name, uint32_t min, uint32_t max, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr);
-
-	State* addState(const char *name) {
+	
+	template<typename T>
+	State* addState(T name, uint32_t min, uint32_t max, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
+		State *state = new State(name, min, max, enter, exit, run);
+		state->setIndex(m_states.size());
+		m_states.append(state);
+		m_currentState = state;
+		return state;
+	}
+	
+	template<typename T>
+	State* addState(T name) {
 		return addState(name, 0, 0, nullptr, nullptr, nullptr);
 	}
 
-	State* addState(const char *name, uint32_t min, uint32_t max) {
+	template<typename T>
+	State* addState(T name, uint32_t min, uint32_t max) {
 		return addState(name, min, max, nullptr, nullptr, nullptr);
 	}
 
-	State* addState(const char *name, uint32_t min, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
+	template<typename T>
+	State* addState(T name, uint32_t min, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
 		return addState(name, min, 0, enter, exit, run);
 	}
 
-	State* addState(const char *name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
+	template<typename T>
+	State* addState(T name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
 		return addState(name, 0, 0, enter, exit, run);
 	}
+
+	void addState(State &state) ;
 
 	void setCurrentState(State *newState, bool callOnEntering = true, bool callOnLeaving = true);
 

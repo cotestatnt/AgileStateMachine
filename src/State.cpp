@@ -18,10 +18,19 @@ Transition* State::addTransition(State *out, uint32_t timeout) {
     return tr;
 }
 
+
+void State::addTransition(Transition& transition) {
+    m_transitions.append(&transition);
+}
+
 Action* State::addAction(uint8_t type, bool &target, uint32_t _time ) {
     Action* action = new Action(this, type, &target, _time);
     m_actions.append(action);
     return action;
+}
+
+void State::addAction(Action& action) {
+    m_actions.append(&action);
 }
 
 
@@ -80,8 +89,9 @@ uint32_t State::getEnterTime() {
 }
 
 const char* State::getStateName() {
-	return m_stateName;
+    return m_stateName;
 }
+
 
 void State::setStateMaxTime(uint32_t _time) {
 	m_maxTime = _time;

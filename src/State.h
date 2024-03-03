@@ -17,29 +17,34 @@ class State
     public:
 		~State(){};
 
-	   	State(const char *name, uint32_t min, uint32_t max,
-			state_cb enter, state_cb exit, state_cb run )
-			:
-			m_stateName(name),
+		template<typename T>
+		State(T name, uint32_t min, uint32_t max, state_cb enter, state_cb exit, state_cb run ) :
 			m_minTime(min),
 			m_maxTime(max),
 			m_onEntering(enter),
 			m_onLeaving(exit),
-			m_onRunning(run) {}
+			m_onRunning(run) 
+		{
+			m_stateName = reinterpret_cast<const char*>(name);
+		}
 
-		State(const char *name) {
+		template<typename T>
+		State(T name) {
 			State(name, 0, 0, nullptr, nullptr, nullptr);
 		}
 
-		State(const char *name, uint32_t min, uint32_t max) {
+		template<typename T>
+		State(T name, uint32_t min, uint32_t max) {
 			State(name, min, max, nullptr, nullptr, nullptr);
 		}
 
-		State(const char *name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
+		template<typename T>
+		State(T name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
 			State(name, 0, 0, enter, exit, run);
 		}
 
-		State(const char *name, uint32_t min = 0, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
+		template<typename T>
+		State(T name, uint32_t min = 0, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
 			State(name, 0, min, enter, exit, run);
 		}
 
@@ -58,9 +63,11 @@ class State
 		Transition*  addTransition(State *out, bool &trigger);
 		Transition*  addTransition(State *out, condition_cb trigger);
 		Transition*  addTransition(State *out, uint32_t timeout);
+		void 		 addTransition(Transition & transition);
 		State* 		 runTransitions();
 
 		Action* 	 addAction(uint8_t type, bool &target, uint32_t _time = 0);
+		void 		 addAction(Action & action);
 		uint8_t 	 getActions();
 		void 		 runActions();
 		void 		 clearActions();

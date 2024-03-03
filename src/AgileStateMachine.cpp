@@ -1,14 +1,11 @@
 #include "AgileStateMachine.h"
 
-
-State* StateMachine::addState(const char *name, uint32_t min, uint32_t max, state_cb enter, state_cb exit, state_cb run)
-{
-	State *state = new State(name, min, max, enter, exit, run);
-	state->setIndex(m_states.size());
-	m_states.append(state);
-	m_currentState = state;
-	return state;
+void StateMachine::addState(State &state) {
+	state.setIndex(m_states.size());
+	m_states.append(&state);
+	m_currentState = &state;
 }
+
 
 void StateMachine::start() {
 	m_started = true;
