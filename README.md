@@ -199,6 +199,7 @@ const char* getStateName();
 ### Supported boards
 The library works virtually with every boards supported by Arduino framework (no hardware dependency)
 
++ 1.0.4 `getStateName()` bugfix
 + 1.0.3 State name passed with template, `F()` macro support
 + 1.0.2 Action Type::S bugfix
 + 1.0.1 Callback state function in a more convenient order
