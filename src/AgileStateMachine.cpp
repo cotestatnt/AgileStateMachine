@@ -82,9 +82,6 @@ State* StateMachine::getCurrentState() {
 	return m_currentState;
 }
 
-const char * StateMachine::getActiveStateName() {
-	return m_currentState->getStateName();
-}
 
 int StateMachine::GetStatesNumber() {
 	return m_states.size();

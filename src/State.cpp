@@ -1,102 +1,115 @@
 #include "State.h"
 
-
-Transition* State::addTransition(State *out, bool &trigger) {
-    Transition* tr = new Transition(out, trigger);
+Transition *State::addTransition(State *out, bool &trigger)
+{
+    Transition *tr = new Transition(out, trigger);
     m_transitions.append(tr);
     return tr;
 }
 
-Transition* State::addTransition(State *out, condition_cb trigger) {
-    Transition* tr = new Transition(out, trigger);
+Transition *State::addTransition(State *out, condition_cb trigger)
+{
+    Transition *tr = new Transition(out, trigger);
     m_transitions.append(tr);
     return tr;
 }
-Transition* State::addTransition(State *out, uint32_t timeout) {
-    Transition* tr = new Transition(out, timeout);
+Transition *State::addTransition(State *out, uint32_t timeout)
+{
+    Transition *tr = new Transition(out, timeout);
     m_transitions.append(tr);
     return tr;
 }
 
-
-void State::addTransition(Transition& transition) {
+void State::addTransition(Transition &transition)
+{
     m_transitions.append(&transition);
 }
 
-Action* State::addAction(uint8_t type, bool &target, uint32_t _time ) {
-    Action* action = new Action(this, type, &target, _time);
+Action *State::addAction(uint8_t type, bool &target, uint32_t _time)
+{
+    Action *action = new Action(this, type, &target, _time);
     m_actions.append(action);
     return action;
 }
 
-void State::addAction(Action& action) {
+void State::addAction(Action &action)
+{
     m_actions.append(&action);
 }
 
-
-State* State::runTransitions() {
-    for (Transition *tr = m_transitions.first(); tr != nullptr; tr = m_transitions.next()) {
+State *State::runTransitions()
+{
+    for (Transition *tr = m_transitions.first(); tr != nullptr; tr = m_transitions.next())
+    {
         // Pass m_enterTime to activate transition on timeout (if defined)
-        if (tr->trigger(m_enterTime)) {
+        if (tr->trigger(m_enterTime))
+        {
             return tr->getOutputState();
         }
     }
     return nullptr;
 }
 
-void State::runActions() {
-    for (Action *action = m_actions.first(); action != nullptr; action = m_actions.next()) {
+void State::runActions()
+{
+    for (Action *action = m_actions.first(); action != nullptr; action = m_actions.next())
+    {
         action->execute();
     }
 }
 
-
-void State::clearActions() {
-    for (Action *action = m_actions.first(); action != nullptr; action = m_actions.next()) {
+void State::clearActions()
+{
+    for (Action *action = m_actions.first(); action != nullptr; action = m_actions.next())
+    {
         action->clear();
     }
 }
 
-uint8_t State::getActions() {
+uint8_t State::getActions()
+{
     return m_actions.size();
 }
 
-
-void State::setIndex(uint8_t index) {
-	m_stateIndex = index;
+void State::setIndex(uint8_t index)
+{
+    m_stateIndex = index;
 }
 
-uint8_t State::getIndex() {
-	return m_stateIndex;
+uint8_t State::getIndex()
+{
+    return m_stateIndex;
 }
 
-void State::setTimeout(uint32_t _time) {
-	if (_time) {
+void State::setTimeout(uint32_t _time)
+{
+    if (_time)
+    {
         m_maxTime = _time;
     }
 }
 
-bool State::getTimeout() {
-	return m_timeout;
+bool State::getTimeout()
+{
+    return m_timeout;
 }
 
-void State::resetEnterTime() {
-  m_enterTime = millis();
+void State::resetEnterTime()
+{
+    m_enterTime = millis();
 }
 
-uint32_t State::getEnterTime() {
-	return m_enterTime;
+uint32_t State::getEnterTime()
+{
+    return m_enterTime;
 }
 
-const char* State::getStateName() {
-    return reinterpret_cast<const char *>(m_stateName);
+void State::setStateMaxTime(uint32_t _time)
+{
+    m_maxTime = _time;
 }
 
-
-void State::setStateMaxTime(uint32_t _time) {
-	m_maxTime = _time;
-}
-
-void State::setStateMinTime(uint32_t _time) {
-	m_minTime = _time;
+void State::setStateMinTime(uint32_t _time)
+{
+    m_minTime = _time;
 }

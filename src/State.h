@@ -14,82 +14,92 @@ using state_cb = void (*)();
 
 class State
 {
-    public:
-		~State(){};
+public:
+	~State(){};
 
-		template<typename T>
-		State(T name, uint32_t min, uint32_t max, state_cb enter, state_cb exit, state_cb run ) :
-			m_minTime(min),
-			m_maxTime(max),
-			m_onEntering(enter),
-			m_onLeaving(exit),
-			m_onRunning(run) 
-		{
-			m_stateName = reinterpret_cast<const char*>(name);
-		}
 
-		template<typename T>
-		State(T name) {
-			State(name, 0, 0, nullptr, nullptr, nullptr);
-		}
+	template <typename T>
+	State(T name, uint32_t min, uint32_t max, state_cb enter, state_cb exit, state_cb run) : m_minTime(min),
+																							 m_maxTime(max),
+																							 m_onEntering(enter),
+																							 m_onLeaving(exit),
+																							 m_onRunning(run)
+	{
+		m_stateName = reinterpret_cast<const char *>(name);
+	}
 
-		template<typename T>
-		State(T name, uint32_t min, uint32_t max) {
-			State(name, min, max, nullptr, nullptr, nullptr);
-		}
+	template <typename T>
+	State(T name)
+	{
+		State(name, 0, 0, nullptr, nullptr, nullptr);
+	}
 
-		template<typename T>
-		State(T name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
-			State(name, 0, 0, enter, exit, run);
-		}
+	template <typename T>
+	State(T name, uint32_t min, uint32_t max)
+	{
+		State(name, min, max, nullptr, nullptr, nullptr);
+	}
 
-		template<typename T>
-		State(T name, uint32_t min = 0, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr) {
-			State(name, 0, min, enter, exit, run);
-		}
+	template <typename T>
+	State(T name, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr)
+	{
+		State(name, 0, 0, enter, exit, run);
+	}
 
-		void 		 setIndex(uint8_t index);
-		uint8_t		 getIndex() ;
-		void 		 setTimeout(uint32_t preset);
-		bool 		 getTimeout() ;
+	template <typename T>
+	State(T name, uint32_t min = 0, state_cb enter = nullptr, state_cb exit = nullptr, state_cb run = nullptr)
+	{
+		State(name, 0, min, enter, exit, run);
+	}
 
-		void 	     resetEnterTime();
-		uint32_t 	 getEnterTime();
-		const char*  getStateName();
+	uint8_t getIndex();
+	void setTimeout(uint32_t preset);
+	bool getTimeout();
+	void resetEnterTime();
+	uint32_t getEnterTime();
+	void setStateMaxTime(uint32_t _time);
+	void setStateMinTime(uint32_t _time);
 
-		void 		 setStateMaxTime(uint32_t _time);
-		void 		 setStateMinTime(uint32_t _time);
+	const char *getStateName()
+	{
+		return reinterpret_cast<const char *>(m_stateName);
+	}
 
-		Transition*  addTransition(State *out, bool &trigger);
-		Transition*  addTransition(State *out, condition_cb trigger);
-		Transition*  addTransition(State *out, uint32_t timeout);
-		void 		 addTransition(Transition & transition);
-		State* 		 runTransitions();
+	const __FlashStringHelper *getStateName_P()
+	{
+		return reinterpret_cast<const __FlashStringHelper *>(m_stateName);
+	}
 
-		Action* 	 addAction(uint8_t type, bool &target, uint32_t _time = 0);
-		void 		 addAction(Action & action);
-		uint8_t 	 getActions();
-		void 		 runActions();
-		void 		 clearActions();
+	Transition *addTransition(State *out, bool &trigger);
+	Transition *addTransition(State *out, condition_cb trigger);
+	Transition *addTransition(State *out, uint32_t timeout);
+	void addTransition(Transition &transition);
 
-	protected:
-		friend class StateMachine;
-		friend class Transition;
+	Action *addAction(uint8_t type, bool &target, uint32_t _time = 0);
+	void addAction(Action &action);
 
-		const char 	   *m_stateName;
-		uint32_t 		m_minTime = 0;   // 0 -> No min time
-		uint32_t 		m_maxTime = 0;   // 0 -> No timeout
-		uint32_t 		m_enterTime;
-		state_cb 		m_onEntering;
-		state_cb 		m_onLeaving;
-		state_cb 		m_onRunning;
+protected:
+	friend class StateMachine;
+	friend class Transition;
 
-		uint8_t         m_stateIndex = 0;
-		bool 			m_timeout = false;
-		LinkedList<Transition*> m_transitions;
-		LinkedList<Action*> m_actions;
+	const char *m_stateName;
+	uint32_t m_minTime = 0; // 0 -> No min time
+	uint32_t m_maxTime = 0; // 0 -> No timeout
+	uint32_t m_enterTime;
+	state_cb m_onEntering;
+	state_cb m_onLeaving;
+	state_cb m_onRunning;
+
+	uint8_t m_stateIndex = 0;
+	bool m_timeout = false;
+	LinkedList<Transition *> m_transitions;
+	LinkedList<Action *> m_actions;
+
+	State *runTransitions();
+	void runActions();
+	void clearActions();
+	uint8_t getActions();
+	void setIndex(uint8_t index);
 };
-
-
 
 #endif
