@@ -89,7 +89,7 @@ uint32_t State::getEnterTime() {
 }
 
 const char* State::getStateName() {
-    return m_stateName;
+    return reinterpret_cast<const char *>(m_stateName);
 }
 
 

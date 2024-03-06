@@ -29,13 +29,13 @@ void blink() {
 
 // Define "on leaving" callback functions
 void onLeaving(){
- 	Serial.print(F("Leaving state"));
+ 	Serial.print(F("Leaving state "));
 	Serial.println(myFSM.getActiveStateName());
 }
 
 // Define "on entering" callback functions (just a message in this example)
 void onEntering(){
-	Serial.print(F("Entered state"));
+	Serial.print(F("Entered state "));
 	Serial.println(myFSM.getActiveStateName());
 
 	blinkInterval = blinkTime[myFSM.getCurrentState()->getIndex()];
