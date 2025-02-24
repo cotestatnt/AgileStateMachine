@@ -76,7 +76,7 @@ void State::setIndex(uint8_t index)
     m_stateIndex = index;
 }
 
-uint8_t State::getIndex()
+uint8_t State::getIndex() const
 {
     return m_stateIndex;
 }
@@ -91,7 +91,7 @@ void State::setTimeout(uint32_t _time)
 
 bool State::getTimeout()
 {
-    return m_timeout;
+    return (millis() - m_enterTime > m_maxTime);
 }
 
 void State::resetEnterTime()

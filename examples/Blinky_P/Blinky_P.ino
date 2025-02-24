@@ -1,6 +1,6 @@
 
 /*
-* Same as Blinky.ino but with the use of F() macro and the method 
+* Same as Blinky.ino but with the use of F() macro and the method
 * getActiveStateName_P() to store state names in flash memory and save precious RAM.
 */
 
@@ -21,12 +21,12 @@ StateMachine myFSM;
 bool xPrevButton = false;
 
 // Blink led. Frequency depends of selected state
-void blink() {	
+void blink() {
 	static bool level = LOW;
 	static uint32_t bTime;
 	if (millis() - bTime >= blinkInterval ) {
 		bTime = millis();
-		level = !level;		
+		level = !level;
 		digitalWrite(LED_BLINK, level);
 	}
 }
@@ -51,10 +51,10 @@ void onEntering(){
 
 // A simple callback function for transition trigger (just button state)
 bool xNextButton() {
-	/* 
-	* Since we have defined a minimum run time for states, the button bounces  
+	/*
+	* Since we have defined a minimum run time for states, the button bounces
 	* has no effects on state machine mechanism functioning
-	* (FSM can switch to next state only after min time has passed)	
+	* (FSM can switch to next state only after min time has passed)
 	*/
 	return (digitalRead(NEXT_BUTTON) == LOW);
 }
