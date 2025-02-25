@@ -1,0 +1,11 @@
+{
+  "additionalFiles": "..\\..\\..,..\\..\\..,..\\..\\..,..\\..,..\\..",
+  "builtInToolsFolders": "",
+  "compiler.optimization_flags": "-Os",
+  "customBuildProperties": "",
+  "fqbn": "esp32:esp32:esp32:JTAGAdapter=default,PSRAM=disabled,PartitionScheme=default,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,LoopCore=1,EventsCore=1,DebugLevel=none,EraseFlash=none,ZigbeeMode=default",
+  "hardwareFolders": "C:\\Users\\BAN_TAG\\AppData\\Local\\Arduino15\\packages,C:\\Users\\BAN_TAG\\Documents\\Arduino\\hardware",
+  "otherLibrariesFolders": "C:\\Users\\BAN_TAG\\Documents\\Arduino\\libraries",
+  "runtime.ide.version": "10607",
+  "sketchLocation": "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\AutomaticGate"
+}

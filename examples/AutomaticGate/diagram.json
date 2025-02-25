@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "author": "Tolentino Cotesta",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": -91.9,
+      "left": -45,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": -25.3,
+      "left": 199.1,
+      "rotate": 90,
+      "attrs": { "color": "red", "label": "FTC" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn2",
+      "top": -25.3,
+      "left": 131.9,
+      "rotate": 90,
+      "attrs": { "color": "green", "label": "START" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -147.6,
+      "left": 42.2,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": -147.6,
+      "left": 99.8,
+      "attrs": { "color": "limegreen" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text1",
+      "top": -163.2,
+      "left": 38.4,
+      "attrs": { "text": "CLOSE" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text2",
+      "top": -163.2,
+      "left": 105.6,
+      "attrs": { "text": "OPEN" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": -166.8,
+      "left": -53.8,
+      "attrs": { "color": "yellow", "flip": "" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text3",
+      "top": -182.4,
+      "left": -57.6,
+      "attrs": { "text": "FLASH" }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "bz1",
+      "top": -189.6,
+      "left": -123,
+      "attrs": { "volume": "0.1" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX0", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX0", "$serialMonitor:TX", "", [] ],
+    [ "esp:GND.2", "led3:C", "black", [ "v0" ] ],
+    [ "esp:D13", "led3:A", "gold", [ "v0" ] ],
+    [ "esp:GND.2", "led1:C", "black", [ "v-57.6", "h38.5" ] ],
+    [ "esp:GND.2", "led2:C", "black", [ "v-57.6", "h153.7" ] ],
+    [ "led1:A", "esp:D12", "red", [ "v19.2", "h-76.8" ] ],
+    [ "esp:D14", "led2:A", "limegreen", [ "v-38.4", "h124.7" ] ],
+    [ "esp:GND.1", "btn2:1.r", "black", [ "v18.9", "h211.3" ] ],
+    [ "esp:GND.1", "btn1:1.r", "black", [ "v18.9", "h297.7" ] ],
+    [ "btn2:2.l", "esp:D27", "green", [ "v-38.4", "h-163.4" ] ],
+    [ "btn1:2.l", "esp:D26", "red", [ "v-28.8", "h-221" ] ],
+    [ "bz1:1", "esp:GND.2", "black", [ "v9.6", "h48" ] ],
+    [ "bz1:2", "esp:D13", "gold", [ "v19.2", "h57.2" ] ]
+  ],
+  "dependencies": {}
+}
