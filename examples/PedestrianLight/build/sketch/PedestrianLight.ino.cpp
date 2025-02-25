@@ -1,3 +1,5 @@
+#include <Arduino.h>
+#line 1 "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\PedestrianLight.ino"
 #include "AgileStateMachine.h"
 
 const byte BTN_CALL   = 2;
@@ -21,6 +23,19 @@ bool outRed, outGreen, outYellow;
 /////////// STATE MACHINE FUNCTIONS //////////////////
 
 // This function will be executed before exit the current state
+#line 24 "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\PedestrianLight.ino"
+void onEnter();
+#line 29 "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\PedestrianLight.ino"
+void onExit();
+#line 34 "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\PedestrianLight.ino"
+void onEnterCall();
+#line 55 "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\PedestrianLight.ino"
+void setupStateMachine();
+#line 82 "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\PedestrianLight.ino"
+void setup();
+#line 94 "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\PedestrianLight.ino"
+void loop();
+#line 24 "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\PedestrianLight.ino"
 void onEnter() {
 	Serial.print(F("Enter on state: "));
 	Serial.println(fsm.getActiveStateName());
@@ -108,5 +123,6 @@ void loop() {
 	digitalWrite(GREEN_LED, outGreen);
 	digitalWrite(YELLOW_LED, outYellow);
 }
+
 
 
