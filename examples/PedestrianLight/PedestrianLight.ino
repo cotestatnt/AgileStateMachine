@@ -71,7 +71,7 @@ void setupStateMachine(){
 	stYellow.addAction(setYellowLight);  // N -> while state is active yellow led is ON
 
 	/* Set initial state and start the Machine State */
-	fsm.setInitialState(stGreen);
+	fsm.setInitialState(&stGreen);
 	fsm.start();
 	Serial.print("Active state: ");
 	Serial.println(fsm.getActiveStateName());
