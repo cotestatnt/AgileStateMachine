@@ -1,5 +1,0 @@
-{
-    "board": "arduino:avr:uno",
-    "output": "build",
-    "sketch": "PedestrianLight.ino"
-}
