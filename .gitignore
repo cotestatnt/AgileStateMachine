@@ -9,3 +9,6 @@
 *.json
 *.toml
 /examples/TestBlinky/build
+/examples/AutomaticGate/build
+/examples/AutomaticGate/build
+/examples/AutomaticGate/build

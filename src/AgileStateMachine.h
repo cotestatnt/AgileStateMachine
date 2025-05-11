@@ -123,13 +123,13 @@ public:
     void setInitialState(State &state) { m_currentState = &state; }
 
     // Start the State Machine
-    inline void StateMachine::start()
+    inline void start()
     {
         m_started = true;
     }
 
     // Stop the State Machine
-    inline void StateMachine::stop()
+    inline void stop()
     {
         m_started = false;
     }
