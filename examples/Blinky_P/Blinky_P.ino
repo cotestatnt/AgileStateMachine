@@ -1,9 +1,10 @@
 
 /*
-* Same as Blinky.ino but with the use of F() macro and the method 
-* getActiveStateName_P() to store state names in flash memory and save precious RAM.
+* If you need to save some SRAM, store the state names in flash memory using F() macro.
+* When needed you can use the getActiveStateName_P functions to get state name.
+* This is useful for boards with limited SRAM like Arduino Uno;
+* In addition, statically defined states, transitions and Actions should be used when possible.
 */
-
 #include <AgileStateMachine.h>
 
 #define PREV_BUTTON  	5
@@ -16,9 +17,6 @@ uint32_t blinkTime[] = {0, 1000, 300, 150};
 
 // Create new Finite State Machine
 StateMachine myFSM;
-
-// A variable for triggering transitions
-bool xPrevButton = false;
 
 // Blink led. Frequency depends of selected state
 void blink() {	
@@ -63,22 +61,19 @@ bool xNextButton() {
 // Definition of the model of the finite state machine and start execution
 void setupStateMachine(){
 	// Create some states and assign name and callback functions
-	State* blinkOff = myFSM.addState(F("BlinkOFF"), 0, 500, onEntering, onLeaving, nullptr);
-	State* blink1 = myFSM.addState(F("Blink1"), onEntering, onLeaving, nullptr);
-	State* blink2 = myFSM.addState(F("Blink2"), 0, 500, onEntering, onLeaving, nullptr);
-	State* blink3 = myFSM.addState(F("Blink3"), 0, 500, onEntering, onLeaving, nullptr);
+	State* blink0 = myFSM.addState(F("Blink0"), 500, onEntering, onLeaving, nullptr);
+	State* blink1 = myFSM.addState(F("Blink1"), 500, onEntering, onLeaving, nullptr);
+	State* blink2 = myFSM.addState(F("Blink2"), 500, onEntering, onLeaving, nullptr);
+	State* blink3 = myFSM.addState(F("Blink3"), 500, onEntering, onLeaving, nullptr);
 
 	// Add transitions to target state and trigger condition (callback function or bool var)
-	blink1->addTransition(blink2, xNextButton);			// xNextButton is a callback function
-	blink1->addTransition(blinkOff, xPrevButton);		// xPrevButton is a bool variable
+	blink0->addTransition(blink1, xNextButton);		// xNextButton is a callback function
+	blink1->addTransition(blink2, xNextButton);			
 	blink2->addTransition(blink3, xNextButton);
-	blink2->addTransition(blink1, xPrevButton);
-	blink3->addTransition(blink2, xPrevButton);
-	blinkOff->addTransition(blink1, 5000);				// This transition is on state timeout (5s)
-	blinkOff->addTransition(blink1, xNextButton);
+	blink3->addTransition(blink0, 5000);			// This transition is on state timeout (5s)	
 
 	// Start the Machine State
-	myFSM.setInitialState(blinkOff);
+	myFSM.setInitialState(blink0);
 	myFSM.start();
 }
 
@@ -104,16 +99,11 @@ void setup() {
 
 void loop() {
 
-	// Read reset button input and update resetBlinky variable
-	xPrevButton = ! digitalRead(PREV_BUTTON);
-
-	// Update State Machine	(true is state changed)
-	if (myFSM.execute()) {
-		Serial.println();
-	}
+	// Update State Machine	
+	myFSM.execute();
 
 	// If blinkInterval greater than 0, let's blink the led
-	if (blinkInterval > 0) {
+	if (blinkInterval) {
 		blink();
 	}
 	else {

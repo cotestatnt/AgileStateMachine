@@ -1,4 +1,4 @@
-#include "AgileStateMachine.h"
+#include <AgileStateMachine.h>
 
 const byte BTN_CALL   = 2;
 const byte GREEN_LED  = 12;
@@ -17,7 +17,6 @@ StateMachine fsm;
 bool inCallButton;
 bool outRed, outGreen, outYellow;
 
-
 /////////// STATE MACHINE FUNCTIONS //////////////////
 
 // This function will be executed before exit the current state
@@ -35,28 +34,52 @@ void onEnterCall() {
 	Serial.println(F("Call registered, please wait a little time."));
 }
 
+// State and Transition definitions
+State stCall("Call semaphore", onEnter, onExit);
+State stGreen("Green", onEnter, onExit);
+State stRed("Red", onEnter, onExit);
+State stYellow("Yellow", onEnter, onExit);
+
+Transition toCall(stCall, inCallButton);
+Transition toYellow(stYellow, CALL_DELAY);
+Transition toRed(stRed, YELLOW_TIME);
+Transition toGreen(stGreen, RED_TIME);
+
+/*
+* In this example Actions are used to set the semaphore lights. 
+* The actions are executed only when the related state is active. 
+* While red and yellow is active the Action of type N (Non-stored) is used, 
+* but for the green state SET/RESET is needed because the transition is 
+* greeen->call->yellow and the light must be kept on until the yellow state is enterd.
+*/  
+Action coilRed(stRed, Action::Type::N, outRed);          // N -> while state is active red led is ON
+Action setGreen(stGreen, Action::Type::S, outGreen);     // S -> SET green led on
+Action resetGreen(stYellow, Action::Type::R, outGreen);  // R -> RESET the green led
+Action coilYellow(stYellow, Action::Type::N, outYellow); // N -> while state is active yellow led is ON
+
 
 // Definition and modeling of the finite state machine
 void setupStateMachine(){
-	/* Create states and assign name and callback functions */
-	State* stCall = fsm.addState("Call semaphore", onEnter, onExit);
-	State* stGreen = fsm.addState("Green", onEnter, onExit);
-	State* stRed = fsm.addState("Red", onEnter, onExit);
-	State* stYellow = fsm.addState("Yellow", onEnter, onExit);
+	/* Add states to the FSM */
+	fsm.addState(stGreen); 
+  fsm.addState(stCall);
+  fsm.addState(stRed);
+  fsm.addState(stYellow);
 
-	stGreen->addTransition(stCall, inCallButton);
-	stCall->addTransition(stYellow, CALL_DELAY);
-	stYellow->addTransition(stRed, YELLOW_TIME);
-	stRed->addTransition(stGreen, RED_TIME);
+  /* Add transitions to each state*/
+  stGreen.addTransition(toCall);  
+  stCall.addTransition(toYellow);
+  stYellow.addTransition(toRed);
+  stRed.addTransition(toGreen);
 
-	stRed->addAction(Action::Type::N, outRed);        // N -> while state is active red led is ON
-	stGreen->addAction(Action::Type::S, outGreen);    // S -> SET green led on
-	stYellow->addAction(Action::Type::R, outGreen);   // R -> RESET the green led
-	stYellow->addAction(Action::Type::N, outYellow);  // N -> while state is active yellow led is ON
-
-
-	/* Set initial state and start the Machine State */
-	fsm.setInitialState(stGreen);
+  /* Add actions to states*/
+  stGreen.addAction(setGreen);
+  stRed.addAction(coilRed);
+  stYellow.addAction(resetGreen);
+  stYellow.addAction(coilYellow);
+  
+	/* Start the FSM */
+  // fsm.setInitialState(stGreen);
 	fsm.start();
 	Serial.print("Active state: ");
 	Serial.println(fsm.getActiveStateName());
@@ -92,5 +115,3 @@ void loop() {
 	digitalWrite(GREEN_LED, outGreen);
 	digitalWrite(YELLOW_LED, outYellow);
 }
-
-

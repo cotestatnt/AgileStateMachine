@@ -1,164 +1,192 @@
-#ifndef LinkedList_hpp
-#define LinkedList_hpp
+#ifndef LINKEDLIST_ARDUINO_H
+#define LINKEDLIST_ARDUINO_H
 
+/**
+ * Generic node class for LinkedList
+ * Handles object ownership and memory management
+ */
 template <class T>
 class ListNode {
 public:
-    T element;
+    T* element;          // Puntatore all'elemento
+    bool is_owned;       // True = il nodo possiede l'elemento (memory management)
     ListNode* next;
     ListNode* prev;
 
-    ListNode(T element, ListNode* prev, ListNode* next)
-        : element(element)
-    {
-        this->next = next;
-        this->prev = prev;
-    };
+    ListNode(T* elem, bool owned, ListNode* prv = nullptr, ListNode* nxt = nullptr)
+        : element(elem), is_owned(owned), prev(prv), next(nxt) {}
+
+    ~ListNode() {
+        if (is_owned && element) {
+            delete element;
+        }
+    }
 };
 
+/**
+ * Generic LinkedList optimized for Arduino
+ * Supports both statically and dynamically allocated elements
+ */
 template <class T>
 class LinkedList {
 private:
-    int length;
-    ListNode<T>* head;
-    ListNode<T>* tail;
-    ListNode<T>* curr;
+    int _size;
+    ListNode<T>* _head;
+    ListNode<T>* _tail;
+    ListNode<T>* _current;
 
 public:
-    LinkedList();
-    ~LinkedList();
-    T getCurrent();
-    T first();
-    T last();
-    T next();
-    T prev();
+    LinkedList() : _size(0), _head(nullptr), _tail(nullptr), _current(nullptr) {}
 
-    int size();
-    void append(T);
-    void deleteCurrent();
-    void clear();
+    ~LinkedList() {
+        clear();
+    }
+
+    /**
+     * Adds a reference to an existing object
+     * The object won't be deleted when the list is destroyed
+     * Ideal for static or global objects
+     * 
+     * @param element Reference to the object to add
+     * @return Pointer to the added object
+     */
+    T* addReference(T& element) {
+        ListNode<T>* node = new ListNode<T>(&element, false);
+        _appendNode(node);
+        return &element;
+    }
+
+    /**
+     * Creates a copy of the object and adds it to the list
+     * The list will manage the memory of the copied object
+     * Ideal for local objects that would otherwise be destroyed
+     * 
+     * @param element Object to copy
+     * @return Pointer to the copy of the object
+     */
+    T* addCopy(const T& element) {
+        T* copy = new T(element);  // Crea una copia
+        ListNode<T>* node = new ListNode<T>(copy, true);
+        _appendNode(node);
+        return copy;
+    }
+
+    /**
+     * Transfers ownership of the object to the list
+     * The list will manage the memory of the object
+     * Ideal for objects created with new
+     * 
+     * @param element Pointer to the object to add
+     * @return The same pointer to the object
+     */
+    T* addOwned(T* element) {
+        if (!element) return nullptr;
+        
+        ListNode<T>* node = new ListNode<T>(element, true);
+        _appendNode(node);
+        return element;
+    }
+
+    // Gets the current element
+    T* getCurrent() {
+        return _current ? _current->element : nullptr;
+    }
+
+    // Const version of getCurrent
+    const T* getCurrent() const {
+        return _current ? _current->element : nullptr;
+    }
+
+    // Navigate to the first element and return it
+    T* first() {
+        _current = _head;
+        return _current ? _current->element : nullptr;
+    }
+
+    // Navigate to the last element and return it
+    T* last() {
+        _current = _tail;
+        return _current ? _current->element : nullptr;
+    }
+
+    // Navigate to the next element and return it
+    T* next() {
+        if (_current && _current->next) {
+            _current = _current->next;
+            return _current->element;
+        }
+        return nullptr;
+    }
+
+    // Navigate to the previous element and return it
+    T* prev() {
+        if (_current && _current->prev) {
+            _current = _current->prev;
+            return _current->element;
+        }
+        return nullptr;
+    }
+
+    // Removes the current element
+    void removeCurrent() {
+        if (!_current) return;
+
+        ListNode<T>* to_delete = _current;
+        
+        // Update links
+        if (to_delete->prev) {
+            to_delete->prev->next = to_delete->next;
+        } else {
+            _head = to_delete->next;
+        }
+
+        if (to_delete->next) {
+            to_delete->next->prev = to_delete->prev;
+        } else {
+            _tail = to_delete->prev;
+        }
+
+        // Update current pointer
+        _current = to_delete->next ? to_delete->next : to_delete->prev;
+        
+        // Delete the node
+        delete to_delete;
+        _size--;
+    }
+
+    // Clear the entire list
+    void clear() {
+        while (_head) {
+            ListNode<T>* temp = _head;
+            _head = _head->next;
+            delete temp;
+        }
+        _head = _tail = _current = nullptr;
+        _size = 0;
+    }
+
+    // Returns the size of the list
+    int size() const {
+        return _size;
+    }
+
+    // Checks if the current element is valid
+    bool isValid() const {
+        return _current != nullptr;
+    }
+
+private:
+    // Helper function to append a node to the end of the list
+    void _appendNode(ListNode<T>* node) {
+        if (_size == 0) {
+            _head = _tail = _current = node;
+        } else {
+            node->prev = _tail;
+            _tail->next = node;
+            _tail = node;
+        }
+        _size++;
+    }
 };
 
-template <class T>
-LinkedList<T>::LinkedList()
-{
-    length = 0;
-    head = nullptr;
-    tail = nullptr;
-    curr = nullptr;
-}
-
-template <class T>
-LinkedList<T>::~LinkedList()
-{
-    clear();
-}
-
-template <class T>
-void LinkedList<T>::append(T element)
-{
-    ListNode<T>* node = new ListNode<T>(element, tail, nullptr);
-
-    if (length == 0)
-        curr = tail = head = node;
-    else {
-        tail->next = node;
-        tail = node;
-    }
-    length++;
-}
-
-template <class T>
-int LinkedList<T>::size()
-{
-    return length;
-}
-
-template <class T>
-T LinkedList<T>::getCurrent()
-{
-    return curr->element;
-}
-
-template <class T>
-T LinkedList<T>::first()
-{
-    curr = head;
-    return head->element;
-}
-
-template <class T>
-T LinkedList<T>::last()
-{
-    curr = tail;
-    return tail->element;
-}
-
-template <class T>
-T LinkedList<T>::next()
-{
-    if (length == 0)
-        return nullptr;
-
-    if (curr->next == nullptr)
-        return nullptr;
-
-    curr = curr->next;
-    return curr->element;
-}
-
-template <class T>
-T LinkedList<T>::prev()
-{
-    if (length == 0)
-        return nullptr;
-
-    if (curr->prev != nullptr)
-        return nullptr;
-
-    curr = curr->prev;
-    return curr->element;
-}
-
-template <class T>
-void LinkedList<T>::deleteCurrent()
-{
-    if (length == 0)
-        return;
-    length--;
-    ListNode<T>* temp = curr;
-
-    if (temp->prev != nullptr)
-        temp->prev->next = temp->next;
-    if (temp->next != nullptr)
-        temp->next->prev = temp->prev;
-
-    if (length == 0)
-        head = curr = tail = nullptr;
-    else if (curr == head)
-        curr = head = head->next;
-    else if (curr == tail)
-        curr = tail = tail->prev;
-    else
-        curr = curr->prev;
-
-    delete temp;
-}
-
-template <class T>
-void LinkedList<T>::clear()
-{
-    if (length == 0)
-        return;
-    ListNode<T>* temp = head;
-
-    while (temp != nullptr) {
-        head = head->next;
-        delete temp;
-        temp = head;
-    }
-    head = curr = tail = nullptr;
-    length = 0;
-}
-
-#endif
+#endif // LINKEDLIST_ARDUINO_H

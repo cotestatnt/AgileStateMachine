@@ -1,0 +1,11 @@
+/examples/AutomaticGate/build
+/examples/AutomaticGate/.vscode
+/examples/Blinky/build
+/examples/Blinky_P/build
+/examples/PedestrianLight/.vscode
+/examples/PedestrianLight/build
+/examples/RailCrossing/.vscode
+/examples/RailCrossing/build
+*.json
+*.toml
+/examples/TestBlinky/build

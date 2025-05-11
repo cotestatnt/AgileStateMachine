@@ -1,21 +1,5 @@
 #include "AgileStateMachine.h"
-
-void StateMachine::addState(State &state) {
-	state.setIndex(m_states.size());
-	m_states.append(&state);
-	m_currentState = &state;
-}
-
-
-void StateMachine::start() {
-	m_started = true;
-}
-
-
-void StateMachine::stop() {
-	m_started = false;
-}
-
+#include "Arduino.h"
 
 bool StateMachine::execute() {
 
@@ -78,18 +62,14 @@ bool StateMachine::execute() {
 }
 
 
-State* StateMachine::getCurrentState() {
-	return m_currentState;
-}
-
-
-int StateMachine::GetStatesNumber() {
-	return m_states.size();
-}
-
-
-uint32_t StateMachine::getLastEnterTime() {
-	return m_currentState->getEnterTime();
+bool StateMachine::updateStateIndex(State *state, uint8_t index)
+{
+	if (state != nullptr) {
+		state->setIndex(index);
+		return true;
+	}
+	// If the state is null, return false
+	return false;
 }
 
 void StateMachine::setCurrentState(State *newState, bool callOnEntering, bool callOnLeaving) {

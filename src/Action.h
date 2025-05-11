@@ -24,6 +24,9 @@ public:
 	Action(State *state, uint8_t type, bool *target, uint32_t time = 0)
 		: m_state(state), m_actionType(type), m_actionTarget(target), m_delay(time) {}
 
+	Action(State &state, uint8_t type, bool &target, uint32_t time = 0)
+		: m_state(&state), m_actionType(type), m_actionTarget(&target), m_delay(time) {}
+
 	State *getState() const { return m_state; }
 	uint8_t getType() const { return m_actionType; }
 	uint32_t getDelay() const { return m_delay; }

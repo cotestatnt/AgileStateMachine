@@ -1,40 +1,54 @@
 #include "State.h"
 
-Transition *State::addTransition(State *out, bool &trigger)
+/**
+ * Add a static/global transition to the state
+ * 
+ * @param transition Reference to the statically defined transition
+ * @return Pointer to the added transition (same address as passed)
+ */
+Transition* State::addTransition(Transition &transition)
 {
-    Transition *tr = new Transition(out, trigger);
-    m_transitions.append(tr);
-    return tr;
+    return m_transitions.addReference(transition);
 }
 
-Transition *State::addTransition(State *out, condition_cb trigger)
+/**
+ * Create dynamically a transition
+ * 
+ * @param state Pointer to the state linked to transition
+ * @return The pointer of new transition created
+ */
+Transition* State::addTransition(State *out, bool &trigger)
+{
+    Transition * trPtr = new Transition(out, trigger);
+    m_transitions.addOwned(trPtr);
+    return trPtr;
+}
+
+Transition * State::addTransition(State *out, condition_cb trigger)
 {
     Transition *tr = new Transition(out, trigger);
-    m_transitions.append(tr);
+    m_transitions.addOwned(tr);
     return tr;
 }
-Transition *State::addTransition(State *out, uint32_t timeout)
+Transition * State::addTransition(State *out, uint32_t timeout)
 {
     Transition *tr = new Transition(out, timeout);
-    m_transitions.append(tr);
+    m_transitions.addOwned(tr);
     return tr;
 }
 
-void State::addTransition(Transition &transition)
+
+Action* State::addAction(Action &action)
 {
-    m_transitions.append(&transition);
+    return m_actions.addReference(action);
 }
 
-Action *State::addAction(uint8_t type, bool &target, uint32_t _time)
-{
-    Action *action = new Action(this, type, &target, _time);
-    m_actions.append(action);
-    return action;
-}
 
-void State::addAction(Action &action)
+Action* State::addAction(uint8_t type, bool &target, uint32_t _time)
 {
-    m_actions.append(&action);
+    Action* actionPtr = new Action(this, type, &target, _time);
+    m_actions.addOwned(actionPtr);
+    return actionPtr;
 }
 
 State *State::runTransitions()
@@ -76,7 +90,7 @@ void State::setIndex(uint8_t index)
     m_stateIndex = index;
 }
 
-uint8_t State::getIndex()
+uint8_t State::getIndex() const
 {
     return m_stateIndex;
 }
@@ -91,7 +105,7 @@ void State::setTimeout(uint32_t _time)
 
 bool State::getTimeout()
 {
-    return m_timeout;
+    return (millis() - m_enterTime > m_maxTime);
 }
 
 void State::resetEnterTime()
