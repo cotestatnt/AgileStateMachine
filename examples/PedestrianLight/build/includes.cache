@@ -1,0 +1,32 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\BAN_TAG\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\BAN_TAG\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\standard"
+  },
+  {
+    "Sourcefile": "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\build\\sketch\\PedestrianLight.ino.cpp",
+    "Include": "AgileStateMachine.h",
+    "Includepath": "C:\\Users\\BAN_TAG\\Documents\\Arduino\\libraries\\AgileStateMachine\\src"
+  },
+  {
+    "Sourcefile": "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\build\\sketch\\PedestrianLight.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\BAN_TAG\\Documents\\Arduino\\libraries\\AgileStateMachine\\src\\AgileStateMachine.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\BAN_TAG\\Documents\\Arduino\\libraries\\AgileStateMachine\\src\\State.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]

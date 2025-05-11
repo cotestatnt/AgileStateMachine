@@ -1,0 +1,6 @@
+#line 1 "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\.vscode\\arduino.json"
+{
+    "board": "arduino:avr:uno",
+    "output": "build",
+    "sketch": "PedestrianLight.ino"
+}

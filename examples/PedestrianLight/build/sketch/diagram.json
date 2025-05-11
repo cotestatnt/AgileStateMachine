@@ -1,0 +1,49 @@
+#line 1 "C:\\Dati\\Cloud\\Dropbox\\ArduinoLibs\\AgileStateMachine\\examples\\PedestrianLight\\diagram.json"
+{
+  "version": 1,
+  "author": "Tolentino Cotesta",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": -73.34, "left": -86.67, "attrs": {} },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -170.37,
+      "left": -22.33,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": -171.04,
+      "left": -64.34,
+      "attrs": { "color": "yellow" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": -170.37,
+      "left": -106.34,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": -163.8,
+      "left": 79.8,
+      "rotate": 90,
+      "attrs": { "color": "white" }
+    }
+  ],
+  "connections": [
+    [ "uno:GND.1", "led3:C", "black", [ "v-22.06", "h-120.17" ] ],
+    [ "uno:GND.1", "led2:C", "black", [ "v-22.06", "h-78.17" ] ],
+    [ "uno:GND.1", "led1:C", "black", [ "v-22.06", "h-36.16" ] ],
+    [ "led3:A", "uno:12", "green", [ "v34.24", "h123.9" ] ],
+    [ "led2:A", "uno:11", "gold", [ "v27.62", "h96.91" ] ],
+    [ "led1:A", "uno:10", "red", [ "v20.51", "h63.48" ] ],
+    [ "uno:GND.1", "btn1:2.r", "black", [ "v-22.06", "h67.17" ] ],
+    [ "btn1:1.r", "uno:2", "white", [ "v19.4", "h19.2" ] ]
+  ],
+  "dependencies": {}
+}
