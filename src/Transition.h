@@ -54,7 +54,7 @@ public:
         return false;
     }
 
-    State * getOutputState()
+    State *getOutputState()
     {
         return &m_outState;
     }

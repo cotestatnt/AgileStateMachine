@@ -56,25 +56,28 @@ public:
     {
         return reinterpret_cast<const __FlashStringHelper *>(m_stateName);
     }
-    
-    Transition* addTransition(Transition &transition);
-    Transition* addTransition(State *out, bool &trigger);
-    Transition* addTransition(State *out, condition_cb trigger);
-    Transition* addTransition(State *out, uint32_t timeout);
+
+    Transition *addTransition(Transition &transition);
+    Transition *addTransition(State *out, bool &trigger);
+    Transition *addTransition(State *out, condition_cb trigger);
+    Transition *addTransition(State *out, uint32_t timeout);
 
     // Equivalent overloads passing State per reference
-    Transition* addTransition(State &out, bool &trigger) {
+    Transition *addTransition(State &out, bool &trigger)
+    {
         return addTransition(&out, trigger);
     }
-    Transition* addTransition(State &out, condition_cb trigger) {
+    Transition *addTransition(State &out, condition_cb trigger)
+    {
         return addTransition(&out, trigger);
     }
-    Transition* addTransition(State &out, uint32_t timeout) {
+    Transition *addTransition(State &out, uint32_t timeout)
+    {
         return addTransition(&out, timeout);
     }
-    
-    Action* addAction(Action &action);
-    Action* addAction(uint8_t type, bool &target, uint32_t _time = 0);
+
+    Action *addAction(Action &action);
+    Action *addAction(uint8_t type, bool &target, uint32_t _time = 0);
 
     void setIndex(uint8_t index);
     uint8_t getIndex() const;
